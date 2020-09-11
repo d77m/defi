@@ -1,0 +1,415 @@
+{
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT ",
+    "version": "eosio::abi/1.1",
+    "types": [
+        {
+            "new_type_name": "float_t",
+            "type": "float32"
+        }
+    ],
+    "structs": [
+        {
+            "name": "addliquidity",
+            "base": "",
+            "fields": [
+                {
+                    "name": "account",
+                    "type": "name"
+                },
+                {
+                    "name": "liquidity_id",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "newliquidity",
+            "base": "",
+            "fields": [
+                {
+                    "name": "account",
+                    "type": "name"
+                },
+                {
+                    "name": "token1",
+                    "type": "token_t"
+                },
+                {
+                    "name": "token2",
+                    "type": "token_t"
+                }
+            ]
+        },
+        {
+            "name": "remove",
+            "base": "",
+            "fields": [
+                {
+                    "name": "type",
+                    "type": "uint64"
+                },
+                {
+                    "name": "id",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "st_defi_config",
+            "base": "",
+            "fields": [
+                {
+                    "name": "swap_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "liquidity_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "pool_id",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "st_defi_liquidity",
+            "base": "",
+            "fields": [
+                {
+                    "name": "liquidity_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "token1",
+                    "type": "token_t"
+                },
+                {
+                    "name": "token2",
+                    "type": "token_t"
+                },
+                {
+                    "name": "quantity1",
+                    "type": "asset"
+                },
+                {
+                    "name": "quantity2",
+                    "type": "asset"
+                },
+                {
+                    "name": "liquidity_token",
+                    "type": "uint64"
+                },
+                {
+                    "name": "price1",
+                    "type": "float_t"
+                },
+                {
+                    "name": "price2",
+                    "type": "float_t"
+                },
+                {
+                    "name": "cumulative1",
+                    "type": "uint64"
+                },
+                {
+                    "name": "cumulative2",
+                    "type": "uint64"
+                },
+                {
+                    "name": "swap_weight",
+                    "type": "float_t"
+                },
+                {
+                    "name": "liquidity_weight",
+                    "type": "float_t"
+                },
+                {
+                    "name": "timestamp",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "st_defi_pair",
+            "base": "",
+            "fields": [
+                {
+                    "name": "digest",
+                    "type": "checksum256"
+                },
+                {
+                    "name": "liquidity_id",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "st_defi_pool",
+            "base": "",
+            "fields": [
+                {
+                    "name": "pool_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "account",
+                    "type": "name"
+                },
+                {
+                    "name": "liquidity_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "liquidity_token",
+                    "type": "uint64"
+                },
+                {
+                    "name": "quantity1",
+                    "type": "asset"
+                },
+                {
+                    "name": "quantity2",
+                    "type": "asset"
+                },
+                {
+                    "name": "timestamp",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "st_liquidity_log",
+            "base": "",
+            "fields": [
+                {
+                    "name": "log_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "account",
+                    "type": "name"
+                },
+                {
+                    "name": "liquidity_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "liquidity_token",
+                    "type": "uint64"
+                },
+                {
+                    "name": "in_token",
+                    "type": "token_t"
+                },
+                {
+                    "name": "out_token",
+                    "type": "token_t"
+                },
+                {
+                    "name": "in_asset",
+                    "type": "asset"
+                },
+                {
+                    "name": "out_asset",
+                    "type": "asset"
+                },
+                {
+                    "name": "type",
+                    "type": "string"
+                },
+                {
+                    "name": "timestamp",
+                    "type": "uint64"
+                },
+                {
+                    "name": "trx_id",
+                    "type": "checksum256"
+                }
+            ]
+        },
+        {
+            "name": "st_swap_log",
+            "base": "",
+            "fields": [
+                {
+                    "name": "swap_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "third_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "account",
+                    "type": "name"
+                },
+                {
+                    "name": "liquidity_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "in_token",
+                    "type": "token_t"
+                },
+                {
+                    "name": "out_token",
+                    "type": "token_t"
+                },
+                {
+                    "name": "in_asset",
+                    "type": "asset"
+                },
+                {
+                    "name": "out_asset",
+                    "type": "asset"
+                },
+                {
+                    "name": "price",
+                    "type": "float_t"
+                },
+                {
+                    "name": "timestamp",
+                    "type": "uint64"
+                },
+                {
+                    "name": "trx_id",
+                    "type": "checksum256"
+                }
+            ]
+        },
+        {
+            "name": "subliquidity",
+            "base": "",
+            "fields": [
+                {
+                    "name": "account",
+                    "type": "name"
+                },
+                {
+                    "name": "liquidity_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "liquidity_token",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "token_t",
+            "base": "",
+            "fields": [
+                {
+                    "name": "address",
+                    "type": "name"
+                },
+                {
+                    "name": "symbol",
+                    "type": "symbol"
+                }
+            ]
+        },
+        {
+            "name": "updateweight",
+            "base": "",
+            "fields": [
+                {
+                    "name": "liquidity_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "type",
+                    "type": "uint64"
+                },
+                {
+                    "name": "weight",
+                    "type": "float32"
+                }
+            ]
+        },
+        {
+            "name": "upgrade",
+            "base": "",
+            "fields": []
+        }
+    ],
+    "actions": [
+        {
+            "name": "addliquidity",
+            "type": "addliquidity",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "newliquidity",
+            "type": "newliquidity",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "remove",
+            "type": "remove",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "subliquidity",
+            "type": "subliquidity",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "updateweight",
+            "type": "updateweight",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "upgrade",
+            "type": "upgrade",
+            "ricardian_contract": ""
+        }
+    ],
+    "tables": [
+        {
+            "name": "config",
+            "type": "st_defi_config",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "defipool",
+            "type": "st_defi_pool",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "liquidity",
+            "type": "st_defi_liquidity",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "liquiditylog",
+            "type": "st_liquidity_log",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "pair",
+            "type": "st_defi_pair",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "swaplog",
+            "type": "st_swap_log",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        }
+    ],
+    "ricardian_clauses": [],
+    "variants": []
+}
