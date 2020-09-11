@@ -213,7 +213,7 @@ void onesgame::swap(name account, asset quantity, std::vector<std::string> &para
 
     for (uint64_t i = 0; i < liquidity_ids.size(); i++)
     {
-        swapdata.original_quantity = asset(quantity.amount, quantity.symbol);
+        swapdata.original_quantity = asset(swapdata.quantity.amount, swapdata.quantity.symbol);
 
         asset fund_fee = asset(swapdata.quantity.amount * ONES_FUND_FEE, swapdata.quantity.symbol);
         this->_transfer_to(name(ONES_FUND_ACCOUNT), swapdata.code, fund_fee, "swap fund fee");
