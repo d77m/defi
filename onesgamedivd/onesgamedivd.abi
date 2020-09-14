@@ -1,0 +1,199 @@
+{
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT ",
+    "version": "eosio::abi/1.1",
+    "types": [],
+    "structs": [
+        {
+            "name": "bonus",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "claim",
+            "base": "",
+            "fields": [
+                {
+                    "name": "account",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "init",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "st_defi_account",
+            "base": "",
+            "fields": [
+                {
+                    "name": "account",
+                    "type": "name"
+                },
+                {
+                    "name": "stake_quantity",
+                    "type": "asset"
+                },
+                {
+                    "name": "reward_quantity",
+                    "type": "asset"
+                },
+                {
+                    "name": "unclaim_quantity",
+                    "type": "asset"
+                },
+                {
+                    "name": "retire_quantity",
+                    "type": "asset"
+                }
+            ]
+        },
+        {
+            "name": "st_defi_bonus",
+            "base": "",
+            "fields": [
+                {
+                    "name": "bonus_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "bonus_quantity",
+                    "type": "asset"
+                },
+                {
+                    "name": "stake_quantity",
+                    "type": "asset"
+                },
+                {
+                    "name": "timestamp",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "st_defi_config",
+            "base": "",
+            "fields": [
+                {
+                    "name": "stake_quantity",
+                    "type": "asset"
+                },
+                {
+                    "name": "retire_quantity",
+                    "type": "asset"
+                },
+                {
+                    "name": "reward_quantity",
+                    "type": "asset"
+                },
+                {
+                    "name": "bonus_quantity",
+                    "type": "asset"
+                },
+                {
+                    "name": "state",
+                    "type": "uint64"
+                },
+                {
+                    "name": "stake_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "bonus_id",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "st_defi_stake",
+            "base": "",
+            "fields": [
+                {
+                    "name": "stake_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "account",
+                    "type": "name"
+                },
+                {
+                    "name": "quantity",
+                    "type": "asset"
+                },
+                {
+                    "name": "timestamp",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "unstake",
+            "base": "",
+            "fields": [
+                {
+                    "name": "account",
+                    "type": "name"
+                },
+                {
+                    "name": "stake_id",
+                    "type": "uint64"
+                }
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "name": "bonus",
+            "type": "bonus",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "claim",
+            "type": "claim",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "init",
+            "type": "init",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "unstake",
+            "type": "unstake",
+            "ricardian_contract": ""
+        }
+    ],
+    "tables": [
+        {
+            "name": "accounts",
+            "type": "st_defi_account",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "bonuslog",
+            "type": "st_defi_bonus",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "config",
+            "type": "st_defi_config",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "stakelog",
+            "type": "st_defi_stake",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        }
+    ],
+    "ricardian_clauses": [],
+    "variants": []
+}
