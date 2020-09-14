@@ -640,7 +640,7 @@ void onesgame::remove(uint64_t type, uint64_t id)
 
         auto itr = _defi_liquidity.find(id);
         eosio_assert(itr != _defi_liquidity.end(), "liquidity isn't exist");
-        eosio_assert(itr->liquidity_token > 0, "liquidity has token");
+        eosio_assert(itr->liquidity_token == 0, "liquidity has token");
         _defi_liquidity.erase(itr);
 
         auto index = _defi_pair.get_index<"byliquidity"_n>();
