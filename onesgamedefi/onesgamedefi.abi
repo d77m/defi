@@ -327,11 +327,6 @@
                     "type": "float32"
                 }
             ]
-        },
-        {
-            "name": "upgrade",
-            "base": "",
-            "fields": []
         }
     ],
     "actions": [
@@ -358,11 +353,6 @@
         {
             "name": "updateweight",
             "type": "updateweight",
-            "ricardian_contract": ""
-        },
-        {
-            "name": "upgrade",
-            "type": "upgrade",
             "ricardian_contract": ""
         }
     ],

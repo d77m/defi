@@ -1,0 +1,212 @@
+{
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT ",
+    "version": "eosio::abi/1.1",
+    "types": [
+        {
+            "new_type_name": "float_t",
+            "type": "float32"
+        }
+    ],
+    "structs": [
+        {
+            "name": "claim",
+            "base": "",
+            "fields": [
+                {
+                    "name": "account",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "init",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "minemarket",
+            "base": "",
+            "fields": [
+                {
+                    "name": "account",
+                    "type": "name"
+                },
+                {
+                    "name": "round",
+                    "type": "uint64"
+                },
+                {
+                    "name": "factor",
+                    "type": "float_t"
+                }
+            ]
+        },
+        {
+            "name": "mineswap",
+            "base": "",
+            "fields": [
+                {
+                    "name": "account",
+                    "type": "name"
+                },
+                {
+                    "name": "quantity",
+                    "type": "asset"
+                }
+            ]
+        },
+        {
+            "name": "st_defi_account",
+            "base": "",
+            "fields": [
+                {
+                    "name": "account",
+                    "type": "name"
+                },
+                {
+                    "name": "quantity",
+                    "type": "asset"
+                },
+                {
+                    "name": "market_quantity",
+                    "type": "asset"
+                },
+                {
+                    "name": "swap_quantity",
+                    "type": "asset"
+                },
+                {
+                    "name": "mine_quantity",
+                    "type": "asset"
+                },
+                {
+                    "name": "market_round",
+                    "type": "uint64"
+                },
+                {
+                    "name": "timestamp",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "st_defi_config",
+            "base": "",
+            "fields": [
+                {
+                    "name": "swap_time",
+                    "type": "uint64"
+                },
+                {
+                    "name": "swap_quantity",
+                    "type": "uint64"
+                },
+                {
+                    "name": "swap_suply",
+                    "type": "uint64"
+                },
+                {
+                    "name": "swap_counter",
+                    "type": "uint64"
+                },
+                {
+                    "name": "swap_issue",
+                    "type": "uint64"
+                },
+                {
+                    "name": "market_suply",
+                    "type": "uint64"
+                },
+                {
+                    "name": "market_time",
+                    "type": "uint64"
+                },
+                {
+                    "name": "last_swap_suply",
+                    "type": "uint64"
+                },
+                {
+                    "name": "market_quantity",
+                    "type": "uint64"
+                },
+                {
+                    "name": "market_issue",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "st_defi_market",
+            "base": "",
+            "fields": [
+                {
+                    "name": "round",
+                    "type": "uint64"
+                },
+                {
+                    "name": "quantity",
+                    "type": "asset"
+                },
+                {
+                    "name": "total",
+                    "type": "uint64"
+                },
+                {
+                    "name": "executed",
+                    "type": "uint64"
+                },
+                {
+                    "name": "timestamp",
+                    "type": "uint64"
+                }
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "name": "claim",
+            "type": "claim",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "init",
+            "type": "init",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "minemarket",
+            "type": "minemarket",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "mineswap",
+            "type": "mineswap",
+            "ricardian_contract": ""
+        }
+    ],
+    "tables": [
+        {
+            "name": "account",
+            "type": "st_defi_account",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "config",
+            "type": "st_defi_config",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "market",
+            "type": "st_defi_market",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        }
+    ],
+    "ricardian_clauses": [],
+    "variants": []
+}

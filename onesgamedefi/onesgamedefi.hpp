@@ -176,8 +176,6 @@ public:
 
     [[eosio::action]] void remove(uint64_t type, uint64_t id);
 
-    [[eosio::action]] void upgrade();
-
     [[eosio::action]] void updateweight(uint64_t liquidity_id, uint64_t type, float weight);
 
     void mine(name account, asset quantity, uint64_t liquidity_id);

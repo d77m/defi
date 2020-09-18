@@ -33,12 +33,33 @@ deployabi:
 deployall:
 	cleos --url=https://mainnet.meet.one set contract $(Account) ../$(Contract) --abi ./$(Contract).abi  -p $(Account)@active
 
+unlockmain:
+	cleos wallet unlock -n onesmain --password PW5KJP1STVLLTJeNaX9kaQEGnVCHSoAEjLZLvARrktJADMKi1nDRG 
+
+unlocktest:
+	cleos wallet unlock -n onestest --password PW5JBAmM8mX3V5NpszdrjASxpmomj3hp1R1wsxxZm2YrJZHc33QSD
+	
 buyram:
 	cleos --url=https://jungle3.cryptolions.io system buyram "${Account}" "${Account}" "10.0000 EOS"
 
 transfer:
 	cleos --url=https://jungle3.cryptolions.io push action eosio.token transfer '[ "onesgamehero", "onesgamedefi", "1.0000 EOS", "swap,1,1" ]' -p onesgamehero@active
 
+luckydraw:
+	cleos --url=https://jungle3.cryptolions.io push action eosio.token transfer '[ "onesgamehero", "onesgamedefi", "101.0000 EOS", "luckydraw" ]' -p onesgamehero@active
+
+remove:
+	cleos --url=https://jungle3.cryptolions.io push action "${Account}" remove '[ "100" ]' -p onesgamehero@active
+
 addcode:
 	cleos --url=https://jungle3.cryptolions.io set account permission onesgamedefi active onesgamedefi --add-code
 
+deposit:
+	cleos --url=https://jungle3.cryptolions.io push action eosio.token transfer '[ "onesgamehero", "onesgamedefi", "1.0000 EOS", "0x5e05b0402348a44f256b3343" ]' -p onesgamehero@active
+
+withdraw:
+	cleos --url=https://jungle3.cryptolions.io push action "${Account}" withdraw '[ "onesgamehero",1,2000 ]' -p onesgamehero@active
+
+
+upgrade:
+	cleos --url=https://eos.newdex.one push action "${Account}" upgrade '[  ]' -p onesgameplay@active

@@ -1,8 +1,8 @@
 # Makefile for an eosio smart contact
 
 CC=eosio-cpp
-Contract=onesgamedivd
-Account=onesgamedivd
+Contract=onesgamemine
+Account=onesgamemine
 
 build:
 	@echo "Building"
@@ -37,29 +37,14 @@ unlocktest:
 buyram:
 	cleos --url=https://jungle3.cryptolions.io system buyram "${Account}" "${Account}" "10.0000 EOS"
 
-# transfer:
-	# cleos --url=https://eospush.tokenpocket.pro push action eosio.token transfer '[ "onesgamedivd", "54321.x", "0.8887 EOS", "bonus" ]' -p onesgamedivd@active
-transfer2:
-	cleos --url=https://jungle3.cryptolions.io push action eosonestoken transfer '[ "onesgameplay", "onesgamedivd", "2.0000 ONES", "stake" ]' -p onesgameplay@active
-transfer3:
-	cleos --url=https://jungle3.cryptolions.io push action eosonestoken transfer '[ "onesgamedefi", "onesgamedivd", "5.0000 ONES", "stake" ]' -p onesgamedefi@active
-transfer4:
-	cleos --url=https://jungle3.cryptolions.io push action eosio.token transfer '[ "onesgamedefi", "onesgamedivd", "5.0000 EOS", "swap divd fee" ]' -p onesgamedefi@active
-
-bonustest:
-	cleos --url=https://jungle3.cryptolions.io push action onesgamedivd bonus '[]' -p onesgamedivd@active
+transfer:
+	cleos --url=https://jungle3.cryptolions.io push action eosio.token transfer '[ "onesgamehero", "onesgamemine", "1.0000 EOS", "0x5e05b0402348a44f256b3343" ]' -p onesgamehero@active
 
 init:
-	cleos --url=https://jungle3.cryptolions.io push action onesgamedivd init '[]' -p onesgamedivd@active
-
-initmain:
-	cleos --url=https://eospush.tokenpocket.pro push action onesgamedivd init '[]' -p onesgamedivd@active
+	cleos --url=https://eospush.tokenpocket.pro push action onesgamemine init '[]' -p onesgamemine@active
 
 remove:
 	cleos --url=https://jungle3.cryptolions.io push action "${Account}" remove '[ "100" ]' -p onesgamehero@active
 
 addcode:
-	cleos --url=https://jungle3.cryptolions.io set account permission onesgamedivd active onesgamedivd --add-code
-
-bonus:
-	cleos --url=https://eospush.tokenpocket.pro push action onesgamedivd bonus '[]' -p onesgamedivd@active
+	cleos --url=https://jungle3.cryptolions.io set account permission onesgamemine active onesgamemine --add-code

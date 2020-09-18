@@ -557,7 +557,6 @@ void onesgame::mine(name account, asset quantity, uint64_t liquidity_id)
 
     if (this->code == name(EOS_TOKEN_ACCOUNT).value && quantity.symbol == EOS_TOKEN_SYMBOL)
     {
-        weight = weight > 0 ? weight : 1.0;
         mine_quantity.amount = quantity.amount * weight;
     }
     else
@@ -595,11 +594,6 @@ void onesgame::updateweight(uint64_t liquidity_id, uint64_t type, float_t weight
             t.swap_weight = weight;
         });
     }
-}
-
-void onesgame::upgrade()
-{
-    require_auth(name(ONES_PLAY_ACCOUNT));
 }
 
 void onesgame::remove(uint64_t type, uint64_t id)
@@ -721,7 +715,7 @@ extern "C"
         {
             switch (action)
             {
-                EOSIO_DISPATCH_HELPER(onesgame, (newliquidity)(addliquidity)(subliquidity)(remove)(updateweight)(upgrade))
+                EOSIO_DISPATCH_HELPER(onesgame, (newliquidity)(addliquidity)(subliquidity)(remove)(updateweight))
             }
             return;
         }
