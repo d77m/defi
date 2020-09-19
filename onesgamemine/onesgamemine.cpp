@@ -170,6 +170,7 @@ void onesgame::minemarket(name account, uint64_t round, float_t factor)
             t.quantity = asset(amount, ONES_TOKEN_SYMBOL);
             t.market_quantity = asset(0, ONES_TOKEN_SYMBOL);
             t.swap_quantity = asset(0, ONES_TOKEN_SYMBOL);
+            t.mine_quantity = asset(0, EOS_TOKEN_SYMBOL);
             t.market_round = round;
             t.timestamp = now();
         });
@@ -207,31 +208,6 @@ void onesgame::init()
         it++;
     }
 
-    return;
-    {
-        st_defi_config defi_config = _defi_config.get_or_default(st_defi_config{
-            .swap_time = default_swap_time,
-            .swap_quantity = 0,
-            .swap_counter = 0,
-            .swap_suply = 0,
-            .swap_issue = 0,
-            .market_suply = 0,
-            .market_time = 0,
-            .last_swap_suply = 0,
-            .market_quantity = 0,
-            .market_issue = 0});
-        defi_config.swap_time = 1598966737;
-        defi_config.swap_quantity = 1025615;
-        defi_config.swap_counter = 19;
-        defi_config.swap_suply = 1224;
-        defi_config.swap_issue = 1440000;
-        defi_config.market_time = 1598961600;
-        defi_config.market_suply = 0;
-        defi_config.last_swap_suply = 0;
-        defi_config.market_quantity = 0;
-        defi_config.market_issue = 0;
-        _defi_config.set(defi_config, _self);
-    }
     return;
 }
 
