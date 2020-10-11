@@ -7,6 +7,8 @@
 #define ONES_TOKEN_SYMBOL symbol("ONES", 4)
 #define ONES_TOKEN_ACCOUNT "eosonestoken"
 
+#define ONES_PLAY_ACCOUNT "onesgameplay"
+
 #define ACCOUNT_CHECK(account) \
     eosio_assert(is_account(account), "invalid account " #account);
 
@@ -157,8 +159,17 @@ void onesgame::unstake(name account, uint64_t stake_id)
 
 void onesgame::bonus()
 {
-    require_auth(get_self());
+    require_auth(name(ONES_PLAY_ACCOUNT));
 
+    tb_defi_bonus _defi_bonus(get_self(), _self.value);
+
+    {
+        auto it = _defi_bonus.rbegin();
+        if (it != _defi_bonus.rend())
+        {
+            eosio_assert(((now() - it->timestamp) > 3600 * 23), "today has been paid");
+        }
+    }
     auto account_index = _defi_account.get_index<"bystake"_n>();
     auto it = account_index.rbegin();
     uint64_t num = 0;
@@ -198,8 +209,6 @@ void onesgame::bonus()
             t.unclaim_quantity += asset(reward_amount, it->unclaim_quantity.symbol);
         });
     }
-
-    tb_defi_bonus _defi_bonus(get_self(), _self.value);
 
     _defi_bonus.emplace(get_self(), [&](auto &t) {
         t.bonus_id = defi_config.bonus_id;

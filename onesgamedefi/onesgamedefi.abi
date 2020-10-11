@@ -23,6 +23,52 @@
             ]
         },
         {
+            "name": "marketclaim",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "marketexit",
+            "base": "",
+            "fields": [
+                {
+                    "name": "memo",
+                    "type": "string"
+                },
+                {
+                    "name": "amount",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "marketmine",
+            "base": "",
+            "fields": [
+                {
+                    "name": "account",
+                    "type": "name"
+                },
+                {
+                    "name": "liquidity_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "to_liquidity_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "percent",
+                    "type": "float32"
+                }
+            ]
+        },
+        {
+            "name": "marketsettle",
+            "base": "",
+            "fields": []
+        },
+        {
             "name": "newliquidity",
             "base": "",
             "fields": [
@@ -229,6 +275,120 @@
             ]
         },
         {
+            "name": "st_market_info",
+            "base": "",
+            "fields": [
+                {
+                    "name": "liquidity_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "account",
+                    "type": "name"
+                },
+                {
+                    "name": "in_eos",
+                    "type": "asset"
+                },
+                {
+                    "name": "in_usdt",
+                    "type": "asset"
+                },
+                {
+                    "name": "liquidity_token",
+                    "type": "uint64"
+                },
+                {
+                    "name": "out_eos",
+                    "type": "asset"
+                },
+                {
+                    "name": "out_usdt",
+                    "type": "asset"
+                },
+                {
+                    "name": "profit",
+                    "type": "asset"
+                },
+                {
+                    "name": "timestamp",
+                    "type": "uint64"
+                },
+                {
+                    "name": "status",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "st_market_log",
+            "base": "",
+            "fields": [
+                {
+                    "name": "mine_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "account",
+                    "type": "name"
+                },
+                {
+                    "name": "liquidity_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "in_eos",
+                    "type": "asset"
+                },
+                {
+                    "name": "in_usdt",
+                    "type": "asset"
+                },
+                {
+                    "name": "liquidity_token",
+                    "type": "uint64"
+                },
+                {
+                    "name": "out_eos",
+                    "type": "asset"
+                },
+                {
+                    "name": "out_usdt",
+                    "type": "asset"
+                },
+                {
+                    "name": "profit",
+                    "type": "asset"
+                },
+                {
+                    "name": "begin_timestamp",
+                    "type": "uint64"
+                },
+                {
+                    "name": "end_timestamp",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "st_mine_pool",
+            "base": "",
+            "fields": [
+                {
+                    "name": "account",
+                    "type": "name"
+                },
+                {
+                    "name": "token",
+                    "type": "name"
+                },
+                {
+                    "name": "symbol",
+                    "type": "symbol"
+                }
+            ]
+        },
+        {
             "name": "st_swap_log",
             "base": "",
             "fields": [
@@ -336,6 +496,26 @@
             "ricardian_contract": ""
         },
         {
+            "name": "marketclaim",
+            "type": "marketclaim",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "marketexit",
+            "type": "marketexit",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "marketmine",
+            "type": "marketmine",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "marketsettle",
+            "type": "marketsettle",
+            "ricardian_contract": ""
+        },
+        {
             "name": "newliquidity",
             "type": "newliquidity",
             "ricardian_contract": ""
@@ -381,6 +561,27 @@
         {
             "name": "liquiditylog",
             "type": "st_liquidity_log",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "marketinfo",
+            "type": "st_market_info",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "marketlog",
+            "type": "st_market_log",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "minepool",
+            "type": "st_mine_pool",
             "index_type": "i64",
             "key_names": [],
             "key_types": []

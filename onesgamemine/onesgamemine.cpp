@@ -48,8 +48,9 @@ void onesgame::issue(name to, asset quantity, string memo)
         uint64_t cur_time = now();
         st_defi_config defi_config = _defi_config.get();
 
-        uint64_t amount = (defi_config.swap_suply - defi_config.last_swap_suply) / 2;
+        uint64_t amount = defi_config.market_quantity; // (defi_config.swap_suply - defi_config.last_swap_suply) / 2;
 
+        // uint64_t amount = 100 * 10000;
         _defi_market.emplace(get_self(), [&](auto &t) {
             t.round = round;
             t.quantity = asset(amount, quantity.symbol);
@@ -62,12 +63,21 @@ void onesgame::issue(name to, asset quantity, string memo)
         defi_config.market_issue += quantity.amount;
         defi_config.market_suply += amount;
         defi_config.last_swap_suply = defi_config.swap_suply;
+        defi_config.market_quantity = 0;
 
-        auto itr = _defi_market.begin();
-        while (itr->round < (round - 200))
+        auto maxit = _defi_market.rbegin();
+        if (maxit != _defi_market.rend())
         {
-            itr = _defi_market.erase(itr);
+            uint64_t max_round = maxit->round;
+
+            auto itr = _defi_market.begin();
+            while (itr != _defi_market.end() && itr->round < (max_round - 100))
+            {
+                _defi_market.erase(itr);
+                itr = _defi_market.begin();
+            }
         }
+
         _defi_config.set(defi_config, _self);
     }
     else if (action == "issueswap")
@@ -107,11 +117,13 @@ void onesgame::mineswap(name account, asset quantity)
     for (uint64_t i = 0; i < counter; i++)
     {
         airdrop_swap_quantity += t * 0.0001;
-        t -= airdrop_swap_quantity;
+        t = total_swap_quantity - airdrop_swap_quantity;
     }
     defi_config.swap_counter += counter;
-    defi_config.swap_quantity = t; // total_swap_quantity - airdrop_swap_quantity;
+    defi_config.swap_quantity = total_swap_quantity - airdrop_swap_quantity;
     defi_config.swap_suply += airdrop_swap_quantity;
+    uint64_t market_quantity = (airdrop_swap_quantity / 2);
+    defi_config.market_quantity += market_quantity;
     defi_config.swap_time = cur_time;
 
     _defi_config.set(defi_config, _self);
@@ -196,18 +208,6 @@ void onesgame::claim(name account)
 void onesgame::init()
 {
     require_auth(get_self());
-    auto it = _defi_account.begin();
-    while (it != _defi_account.end())
-    {
-        if (it->mine_quantity.amount == 0)
-        {
-            _defi_account.modify(it, _self, [&](auto &t) {
-                t.mine_quantity = asset(0, EOS_TOKEN_SYMBOL);
-            });
-        }
-        it++;
-    }
-
     return;
 }
 

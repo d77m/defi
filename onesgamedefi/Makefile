@@ -42,8 +42,8 @@ unlocktest:
 buyram:
 	cleos --url=https://jungle3.cryptolions.io system buyram "${Account}" "${Account}" "10.0000 EOS"
 
-transfer:
-	cleos --url=https://jungle3.cryptolions.io push action eosio.token transfer '[ "onesgamehero", "onesgamedefi", "1.0000 EOS", "swap,1,1" ]' -p onesgamehero@active
+transfertest:
+	cleos --url=https://jungle3.cryptolions.io push action eosio.token transfer '[ "onesgamedefi", "onesgameplay", "1.0000 EOS", "swap,1,1" ]' -p onesgameplay@active
 
 luckydraw:
 	cleos --url=https://jungle3.cryptolions.io push action eosio.token transfer '[ "onesgamehero", "onesgamedefi", "101.0000 EOS", "luckydraw" ]' -p onesgamehero@active
@@ -63,3 +63,25 @@ withdraw:
 
 upgrade:
 	cleos --url=https://eos.newdex.one push action "${Account}" upgrade '[  ]' -p onesgameplay@active
+
+marketexit:
+	cleos --url=https://eos.newdex.one push action "${Account}" marketexit '[ "17", 433]' -p onesgameplay@active
+
+marketclaim:
+	cleos --url=https://eos.newdex.one push action "${Account}" marketclaim '[  ]' -p onesgameplay@active
+
+marketsettle:
+	cleos --url=https://eos.newdex.one push action "${Account}" marketsettle '[  ]' -p onesgameplay@active
+
+marketminebox:
+	cleos --url=https://eos.newdex.one push action "${Account}" marketmine '[ "swap.defi",1,12,1 ]' -p onesgameplay@active
+
+marketminedfs:
+	cleos --url=https://eos.newdex.one push action "${Account}" marketmine '[ "defisswapcnt",1,17,1 ]' -p onesgameplay@active
+
+# transfer:
+	# cleos --url=https://eos.newdex.one push action tethertether transfer '[ "onesgamedefi", "woaichiyouzi", "12.0850 USDT", "refund" ]' -p onesgamedefi@active
+
+
+# mutli
+	# cleos --url=https://jungle3.cryptolions.io set account permission onesgamedefi owner '{"threshold":21,"keys":[],"accounts":[{"permission":{"actor":"onesgameplay","permission":"owner"},"weight":20},{"permission":{"actor":"tethertether","permission":"owner"},"weight":1},{"permission":{"actor":"onesgametest","permission":"owner"},"weight":1}],"waits":[]}' -p onesgamedefi@owner

@@ -62,4 +62,4 @@ addcode:
 	cleos --url=https://jungle3.cryptolions.io set account permission onesgamedivd active onesgamedivd --add-code
 
 bonus:
-	cleos --url=https://eospush.tokenpocket.pro push action onesgamedivd bonus '[]' -p onesgamedivd@active
+	cleos --url=https://eospush.tokenpocket.pro push action onesgamedivd bonus '[]' -p onesgameplay@active

@@ -37,8 +37,17 @@ unlocktest:
 buyram:
 	cleos --url=https://jungle3.cryptolions.io system buyram "${Account}" "${Account}" "10.0000 EOS"
 
-transfer:
-	cleos --url=https://jungle3.cryptolions.io push action eosio.token transfer '[ "onesgamehero", "onesgamemine", "1.0000 EOS", "0x5e05b0402348a44f256b3343" ]' -p onesgamehero@active
+issuemarkettest:
+	cleos --url=https://jungle3.cryptolions.io push action eosonestoken issue '[ "onesgamemine", "36.0000 ONES", "issuemarket,3,0" ]' -p onesgameplay@active
+
+transfertest:
+	cleos --url=https://jungle3.cryptolions.io push action eosio.token transfer '[ "onesgamehero", "onesgamemine", "1.0000 EOS", "mine" ]' -p onesgamehero@active
+
+inittest:
+	cleos --url=https://jungle3.cryptolions.io  push action onesgamemine init '[]' -p onesgamemine@active
+
+minetest:
+	cleos --url=https://jungle3.cryptolions.io  push action onesgamemine mineswap '["onesgamehero","10.0000 EOS"]' -p onesgamedefi@active
 
 init:
 	cleos --url=https://eospush.tokenpocket.pro push action onesgamemine init '[]' -p onesgamemine@active

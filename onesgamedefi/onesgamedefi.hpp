@@ -13,8 +13,6 @@
 using namespace eosio;
 using namespace std;
 
-// typedef std::vector<uint64_t> uint64Array;
-
 //contract
 class [[eosio::contract("onesgamedefi")]] onesgame : public contract
 {
@@ -165,6 +163,64 @@ public:
         uint64_t code;
     };
 
+    struct [[eosio::table]] st_mine_pool
+    {
+        eosio::name account;
+        eosio::name token;
+        eosio::symbol symbol;
+
+        uint64_t primary_key() const { return account.value; }
+    };
+
+    typedef multi_index<"minepool"_n, st_mine_pool> tb_mine_pool;
+
+    struct [[eosio::table]] st_market_info
+    {
+        uint64_t liquidity_id;
+        eosio::name account;
+
+        eosio::asset in_eos;
+        eosio::asset in_usdt;
+
+        uint64_t liquidity_token;
+
+        eosio::asset out_eos;
+        eosio::asset out_usdt;
+
+        eosio::asset profit;
+
+        uint64_t timestamp;
+        uint64_t status;
+
+        uint64_t primary_key() const { return liquidity_id; }
+    };
+
+    typedef multi_index<"marketinfo"_n, st_market_info> tb_market_info;
+
+    struct [[eosio::table]] st_market_log
+    {
+        uint64_t mine_id;
+        eosio::name account;
+        uint64_t liquidity_id;
+
+        eosio::asset in_eos;
+        eosio::asset in_usdt;
+
+        uint64_t liquidity_token;
+
+        eosio::asset out_eos;
+        eosio::asset out_usdt;
+
+        eosio::asset profit;
+
+        uint64_t begin_timestamp;
+        uint64_t end_timestamp;
+
+        uint64_t primary_key() const { return mine_id; }
+    };
+
+    typedef multi_index<"marketlog"_n, st_market_log> tb_market_log;
+
 public:
     void transfer(name from, name to, asset quantity, string memo);
 
@@ -178,7 +234,24 @@ public:
 
     [[eosio::action]] void updateweight(uint64_t liquidity_id, uint64_t type, float weight);
 
-    void mine(name account, asset quantity, uint64_t liquidity_id);
+    [[eosio::action]] void marketmine(name account, uint64_t liquidity_id, uint64_t to_liquidity_id, float percent);
+    [[eosio::action]] void marketexit(string memo, uint64_t amount);
+    [[eosio::action]] void marketclaim();
+
+    [[eosio::action]] void marketsettle();
+
+private:
+    // void _mine_box(name account, uint64_t from_liquidity_id, uint64_t to_liquidity_id, float percent);
+    void _marketclaim_box();
+    void _marketexit_box(uint64_t liquidity_token, string memo);
+
+    void _marketexit_dfs(uint64_t liquidity_token, uint64_t liquidity_id);
+
+    void _handle_box(name from, name to, asset quantity, string memo);
+    void _handle_dfs(name from, name to, asset quantity, string memo);
+
+private:
+    void swapmine(name account, asset quantity, uint64_t liquidity_id);
 
     void swap(name account, asset quantity, std::vector<std::string> & params);
 
@@ -196,7 +269,6 @@ public:
 
     uint64_t get_pool_id();
 
-private:
     void
     _transfer_to(name to, uint64_t amount, symbol coin_code, string memo);
 
