@@ -371,24 +371,6 @@
             ]
         },
         {
-            "name": "st_mine_pool",
-            "base": "",
-            "fields": [
-                {
-                    "name": "account",
-                    "type": "name"
-                },
-                {
-                    "name": "token",
-                    "type": "name"
-                },
-                {
-                    "name": "symbol",
-                    "type": "symbol"
-                }
-            ]
-        },
-        {
             "name": "st_swap_log",
             "base": "",
             "fields": [
@@ -575,13 +557,6 @@
         {
             "name": "marketlog",
             "type": "st_market_log",
-            "index_type": "i64",
-            "key_names": [],
-            "key_types": []
-        },
-        {
-            "name": "minepool",
-            "type": "st_mine_pool",
             "index_type": "i64",
             "key_names": [],
             "key_types": []

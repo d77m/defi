@@ -1,22 +1,20 @@
 #pragma once
 
-#include <eosiolib/asset.hpp>
 #include <eosiolib/crypto.h>
+
+#include <eosiolib/asset.hpp>
 #include <eosiolib/eosio.hpp>
 #include <eosiolib/singleton.hpp>
 #include <eosiolib/time.hpp>
 #include <string>
-#include <vector>
-
 #include <utils.hpp>
+#include <vector>
 
 using namespace eosio;
 using namespace std;
 
-//contract
-class [[eosio::contract("onesgamedefi")]] onesgame : public contract
-{
-public:
+class [[eosio::contract("onesgamedefi")]] onesgame : public contract {
+   public:
     using eosio::contract::contract;
 
     onesgame(eosio::name self, eosio::name code,
@@ -26,35 +24,27 @@ public:
           _defi_pool(_self, _self.value),
           _defi_config(_self, _self.value),
           _liquidity_log(_self, _self.value),
-          _swap_log(_self, _self.value){
+          _swap_log(_self, _self.value){};
 
-          };
+    ~onesgame(){};
 
-    ~onesgame(){
-
-    };
-
-    struct token_t
-    {
+    struct token_t {
         name address;
         symbol symbol;
-        friend bool operator==(const token_t &a, const token_t &b)
-        {
+        friend bool operator==(const token_t &a, const token_t &b) {
             return a.address == b.address && a.symbol == b.symbol;
         }
         EOSLIB_SERIALIZE(token_t, (address)(symbol))
     };
 
-    struct [[eosio::table("config")]] st_defi_config
-    {
+    struct [[eosio::table("config")]] st_defi_config {
         uint64_t swap_id;
         uint64_t liquidity_id;
         uint64_t pool_id;
     };
     typedef singleton<"config"_n, st_defi_config> tb_defi_config;
 
-    struct currency_stats
-    {
+    struct currency_stats {
         asset supply;
         asset max_supply;
         name issuer;
@@ -63,20 +53,18 @@ public:
     };
     typedef eosio::multi_index<"stat"_n, currency_stats> stats;
 
-    struct [[eosio::table]] st_defi_pair
-    {
+    struct [[eosio::table]] st_defi_pair {
         checksum256 digest;
         uint64_t liquidity_id;
 
         uint64_t primary_key() const { return utils::uint64_hash(digest); }
         uint64_t liquidity_key() const { return liquidity_id; }
     };
-    typedef multi_index<"pair"_n, st_defi_pair,
-                        indexed_by<"byliquidity"_n, const_mem_fun<st_defi_pair, uint64_t, &st_defi_pair::liquidity_key>>>
-        tb_defi_pair;
+    typedef multi_index<"pair"_n, st_defi_pair,indexed_by<"byliquidity"_n,
+                                   const_mem_fun<st_defi_pair, uint64_t,
+                                                 &st_defi_pair::liquidity_key>>> tb_defi_pair;
 
-    struct [[eosio::table]] st_defi_liquidity
-    {
+    struct [[eosio::table]] st_defi_liquidity {
         uint64_t liquidity_id;
         token_t token1;
         token_t token2;
@@ -97,8 +85,7 @@ public:
 
     typedef multi_index<"liquidity"_n, st_defi_liquidity> tb_defi_liquidity;
 
-    struct [[eosio::table]] st_defi_pool
-    {
+    struct [[eosio::table]] st_defi_pool {
         uint64_t pool_id;
         eosio::name account;
         uint64_t liquidity_id;
@@ -112,11 +99,10 @@ public:
     };
 
     typedef multi_index<"defipool"_n, st_defi_pool,
-                        indexed_by<"byaccountkey"_n, const_mem_fun<st_defi_pool, uint64_t, &st_defi_pool::account_key>>>
-        tb_defi_pool;
+        indexed_by<"byaccountkey"_n, const_mem_fun<st_defi_pool, uint64_t,
+                                                   &st_defi_pool::account_key>>> tb_defi_pool;
 
-    struct [[eosio::table]] st_liquidity_log
-    {
+    struct [[eosio::table]] st_liquidity_log {
         uint64_t log_id;
         eosio::name account;
         uint64_t liquidity_id;
@@ -134,8 +120,7 @@ public:
 
     typedef multi_index<"liquiditylog"_n, st_liquidity_log> tb_liquidity_log;
 
-    struct [[eosio::table]] st_swap_log
-    {
+    struct [[eosio::table]] st_swap_log {
         uint64_t swap_id;
         uint64_t third_id;
         eosio::name account;
@@ -153,29 +138,16 @@ public:
     };
 
     typedef multi_index<"swaplog"_n, st_swap_log,
-                        indexed_by<"bythirdkey"_n, const_mem_fun<st_swap_log, uint64_t, &st_swap_log::third_key>>>
-        tb_swap_log;
+        indexed_by<"bythirdkey"_n, const_mem_fun<st_swap_log, uint64_t,
+                                                 &st_swap_log::third_key>>> tb_swap_log;
 
-    struct swap_t
-    {
+    struct swap_t {
         asset quantity;
         asset original_quantity;
         uint64_t code;
     };
 
-    struct [[eosio::table]] st_mine_pool
-    {
-        eosio::name account;
-        eosio::name token;
-        eosio::symbol symbol;
-
-        uint64_t primary_key() const { return account.value; }
-    };
-
-    typedef multi_index<"minepool"_n, st_mine_pool> tb_mine_pool;
-
-    struct [[eosio::table]] st_market_info
-    {
+    struct [[eosio::table]] st_market_info {
         uint64_t liquidity_id;
         eosio::name account;
 
@@ -197,8 +169,7 @@ public:
 
     typedef multi_index<"marketinfo"_n, st_market_info> tb_market_info;
 
-    struct [[eosio::table]] st_market_log
-    {
+    struct [[eosio::table]] st_market_log {
         uint64_t mine_id;
         eosio::name account;
         uint64_t liquidity_id;
@@ -221,7 +192,7 @@ public:
 
     typedef multi_index<"marketlog"_n, st_market_log> tb_market_log;
 
-public:
+   public:
     void transfer(name from, name to, asset quantity, string memo);
 
     [[eosio::action]] void newliquidity(name account, token_t token1, token_t token2);
@@ -240,8 +211,7 @@ public:
 
     [[eosio::action]] void marketsettle();
 
-private:
-    // void _mine_box(name account, uint64_t from_liquidity_id, uint64_t to_liquidity_id, float percent);
+   private:
     void _marketclaim_box();
     void _marketexit_box(uint64_t liquidity_token, string memo);
 
@@ -249,39 +219,47 @@ private:
 
     void _handle_box(name from, name to, asset quantity, string memo);
     void _handle_dfs(name from, name to, asset quantity, string memo);
+    void _handle_refund(asset quantity);
+    void _handle_withdraw(asset quantity);
 
-private:
     void swapmine(name account, asset quantity, uint64_t liquidity_id);
 
     void swap(name account, asset quantity, std::vector<std::string> & params);
 
     swap_t _swap(name account, swap_t & swapin, uint64_t liquidity_id, uint64_t third_id);
 
-    void _swaplog(name account, uint64_t third_id, uint64_t liquidity_id, token_t in_token, token_t out_token, asset in_asset, asset out_asset, asset fee, float_t price);
+    void _swaplog(name account, uint64_t third_id, uint64_t liquidity_id,
+                  token_t in_token, token_t out_token, asset in_asset,
+                  asset out_asset, asset fee, float_t price);
 
-    void _liquiditylog(name account, uint64_t liquidity_id, string type, token_t in_token, token_t out_token, asset in_asset, asset out_asset, uint64_t liquidity_token);
+    void _liquiditylog(name account, uint64_t liquidity_id, string type,
+                       token_t in_token, token_t out_token, asset in_asset,
+                       asset out_asset, uint64_t liquidity_token);
 
     void _transfer_to(name to, uint64_t code, asset quantity, string memo);
 
-    uint64_t get_swap_id();
+    uint64_t _get_swap_id();
 
-    uint64_t get_liquidity_id();
+    uint64_t _get_liquidity_id();
 
-    uint64_t get_pool_id();
+    uint64_t _get_pool_id();
 
-    void
-    _transfer_to(name to, uint64_t amount, symbol coin_code, string memo);
+    checksum256 _get_trx_id();
+
+    std::vector<eosio::action> _get_actions();
+
+    void _transfer_to(name to, uint64_t amount, symbol coin_code, string memo);
 
     void _newpair(uint64_t liquidity_id, const token_t &token1, const token_t &token2);
 
-public:
-    static uint64_t code;
-
-private:
     tb_defi_config _defi_config;
     tb_defi_liquidity _defi_liquidity;
     tb_defi_pool _defi_pool;
 
     tb_swap_log _swap_log;
     tb_liquidity_log _liquidity_log;
+
+public:
+    static uint64_t code;
+
 };
