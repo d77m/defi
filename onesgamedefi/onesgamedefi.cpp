@@ -737,11 +737,9 @@ void onesgame::marketsettle() {
 
         if ((info->out_usdt.amount - info->in_usdt.amount) < 0) {
             eosio_assert(action1.account == name(USDT_TOKEN_ACCOUNT) &&
-                    transfer_data1.quantity.symbol == USDT_TOKEN_SYMBOL,
-                "You need transfer usdt token");
+                    transfer_data1.quantity.symbol == USDT_TOKEN_SYMBOL, "You need transfer usdt token");
             eosio_assert((info->in_usdt.amount - info->out_usdt.amount) ==
-                             transfer_data1.quantity.amount,
-                         "You need transfer enough usdt token");
+                             transfer_data1.quantity.amount, "You need transfer enough usdt token");
         }
     } else if (size == 3) {
         eosio::action action1 = eosio::get_action(1, 0);
@@ -805,12 +803,10 @@ void onesgame::marketsettle() {
 
 void onesgame::_marketexit_box(uint64_t liquidity_token, string memo) {
     asset quantity(liquidity_token, BOXL_TOKEN_SYMBOL);
-    this->_transfer_to(name(BOX_DEFI_ACCOUNT), name(BOX_LPTOKEN_ACCOUNT).value,
-                       quantity, memo);
+    this->_transfer_to(name(BOX_DEFI_ACCOUNT), name(BOX_LPTOKEN_ACCOUNT).value, quantity, memo);
 }
 
-void onesgame::_marketexit_dfs(uint64_t liquidity_token,
-                               uint64_t liquidity_id) {
+void onesgame::_marketexit_dfs(uint64_t liquidity_token, uint64_t liquidity_id) {
     eosio::action(permission_level{get_self(), "active"_n},
                   eosio::name(DFS_DEFI_ACCOUNT), "withdraw"_n,
                   make_tuple(get_self(), liquidity_id, liquidity_token)).send();
@@ -845,8 +841,7 @@ void onesgame::_handle_box(name from, name to, asset quantity, string memo) {
             eosio_assert(info != _market_info.end(), "mine is not exist");
             _market_info.modify(info, _self, [&](auto &t) { t.profit = quantity; });
 
-            this->_transfer_to(name(ONES_MINE_ACCOUNT), name(BOX_TOKEN_ACCOUNT).value, quantity,
-                               "market mine reward");
+            this->_transfer_to(name(ONES_MINE_ACCOUNT), name(BOX_TOKEN_ACCOUNT).value, quantity, "market mine reward");
         }
     }
 }
@@ -865,8 +860,7 @@ void onesgame::_handle_dfs(name from, name to, asset quantity, string memo) {
             eosio_assert(info != _market_info.end(), "mine is not exist");
             _market_info.modify(info, _self, [&](auto &t) { t.profit = quantity; });
 
-            this->_transfer_to(name(ONES_MINE_ACCOUNT), name(DFS_TOKEN_ACCOUNT).value, quantity,
-                               "market mine reward");
+            this->_transfer_to(name(ONES_MINE_ACCOUNT), name(DFS_TOKEN_ACCOUNT).value, quantity, "market mine reward");
         }
     }
 }
