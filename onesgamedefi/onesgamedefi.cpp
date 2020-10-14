@@ -118,8 +118,7 @@ void onesgame::transfer(name from, name to, asset quantity, string memo) {
     utils::split(memo, ',', params);
 
     if (params.size() == 0)
-        return this->_transfer_to(name(ONES_PLAY_ACCOUNT), this->code, quantity,
-                                  memo);
+        return this->_transfer_to(name(ONES_PLAY_ACCOUNT), this->code, quantity, memo);
 
     std::string action = params.at(0);
 
