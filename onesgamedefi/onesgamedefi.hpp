@@ -85,6 +85,24 @@ class [[eosio::contract("onesgamedefi")]] onesgame : public contract {
 
     typedef multi_index<"liquidity"_n, st_defi_liquidity> tb_defi_liquidity;
 
+    struct transfer_args {
+        name from;
+        name to;
+        asset quantity;
+        string memo;
+    };
+    
+    struct st_defi_transfer {
+        checksum256 trx_id;
+        name action1;
+        transfer_args args1;
+        name action2;
+        transfer_args args2;
+        uint64_t status;
+    };
+    typedef singleton<"transfer"_n, st_defi_transfer> tb_defi_transfer;
+
+
     struct [[eosio::table]] st_defi_pool {
         uint64_t pool_id;
         eosio::name account;
@@ -212,6 +230,8 @@ class [[eosio::contract("onesgamedefi")]] onesgame : public contract {
     [[eosio::action]] void marketsettle();
 
    private:
+    void _addliquidity(name from, name to, asset quantity, string memo);
+
     void _marketclaim_box();
     void _marketexit_box(uint64_t liquidity_token, string memo);
 
@@ -222,7 +242,7 @@ class [[eosio::contract("onesgamedefi")]] onesgame : public contract {
     void _handle_refund(asset quantity);
     void _handle_withdraw(asset quantity);
 
-    void swapmine(name account, asset quantity, uint64_t liquidity_id);
+    void swapmine(name account, uint64_t code, asset quantity, uint64_t liquidity_id);
 
     void swap(name account, asset quantity, std::vector<std::string> & params);
 
@@ -251,6 +271,8 @@ class [[eosio::contract("onesgamedefi")]] onesgame : public contract {
     void _transfer_to(name to, uint64_t amount, symbol coin_code, string memo);
 
     void _newpair(uint64_t liquidity_id, const token_t &token1, const token_t &token2);
+
+    checksum256 _getpair_digest( const token_t &token1, const token_t &token2);
 
     tb_defi_config _defi_config;
     tb_defi_liquidity _defi_liquidity;

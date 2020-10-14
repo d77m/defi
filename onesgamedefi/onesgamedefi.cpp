@@ -36,13 +36,6 @@ float_t ONES_SWAP_FEE = 0.001;
 float_t ONES_FUND_FEE = 0.001;
 float_t ONES_DIVD_FEE = 0.001;
 
-struct transfer_args {
-    name from;
-    name to;
-    asset quantity;
-    string memo;
-};
-
 void onesgame::newliquidity(name account, token_t token1, token_t token2) {
     require_auth(account);
 
@@ -62,10 +55,7 @@ void onesgame::newliquidity(name account, token_t token1, token_t token2) {
 
     this->_newpair(liquidity_id, token1, token2);
 
-    bool iseos = (token2.address == name(EOS_TOKEN_ACCOUNT) &&
-                  token2.symbol == EOS_TOKEN_SYMBOL)
-                     ? true
-                     : false;
+    bool iseos = (token2.address == name(EOS_TOKEN_ACCOUNT) && token2.symbol == EOS_TOKEN_SYMBOL)? true: false;
 
     _defi_liquidity.emplace(get_self(), [&](auto &t) {
         t.liquidity_id = liquidity_id;
@@ -78,8 +68,21 @@ void onesgame::newliquidity(name account, token_t token1, token_t token2) {
     });
 }
 
-void onesgame::_newpair(uint64_t liquidity_id, const token_t &token1,
-                        const token_t &token2) {
+void onesgame::_newpair(uint64_t liquidity_id, const token_t &token1, const token_t &token2) {
+    
+    checksum256 digest = this->_getpair_digest(token1, token2);
+    tb_defi_pair _defi_pair(_self, _self.value);
+
+    auto itr = _defi_pair.find(utils::uint64_hash(digest));
+    check(itr == _defi_pair.end(), "Liquidity already exists");
+
+    _defi_pair.emplace(get_self(), [&](auto &t) {
+        t.digest = digest;
+        t.liquidity_id = liquidity_id;
+    });
+}
+
+checksum256 onesgame::_getpair_digest( const token_t &token1, const token_t &token2){
     bool reverse = token1.address.value < token2.address.value;
 
     name _contract1 = reverse ? token1.address : token2.address;
@@ -92,17 +95,7 @@ void onesgame::_newpair(uint64_t liquidity_id, const token_t &token1,
     uni_key += ":" + _contract2.to_string() + "-" + _sym2.code().to_string();
 
     const char *uni_key_cstr = uni_key.c_str();
-    checksum256 digest = sha256(uni_key_cstr, strlen(uni_key_cstr));
-
-    tb_defi_pair _defi_pair(_self, _self.value);
-
-    auto itr = _defi_pair.find(utils::uint64_hash(digest));
-    check(itr == _defi_pair.end(), "Liquidity already exists");
-
-    _defi_pair.emplace(get_self(), [&](auto &t) {
-        t.digest = digest;
-        t.liquidity_id = liquidity_id;
-    });
+    return sha256(uni_key_cstr, strlen(uni_key_cstr));
 }
 
 void onesgame::transfer(name from, name to, asset quantity, string memo) {
@@ -131,10 +124,8 @@ void onesgame::transfer(name from, name to, asset quantity, string memo) {
     std::string action = params.at(0);
 
     if (action == "swap") return this->swap(from, quantity, params);
-
-    if (action != "addliquidity")
-        return this->_transfer_to(name(ONES_PLAY_ACCOUNT), this->code, quantity,
-                                  memo);
+    if (action == "addliquidity") return this->_addliquidity(from, to, quantity, memo);
+    return this->_transfer_to(name(ONES_PLAY_ACCOUNT), this->code, quantity, memo);
 }
 
 void onesgame::_swaplog(name account, uint64_t third_id, uint64_t liquidity_id,
@@ -212,6 +203,7 @@ std::vector<eosio::action> onesgame::_get_actions(){
     auto read_size = read_transaction(tx, tx_size);
     eosio_assert(tx_size == read_size, "read_transaction failed");
     auto trx = unpack<transaction>(tx, read_size);
+
     return trx.actions;
 }
 void onesgame::swap(name account, asset quantity, std::vector<std::string> &params) {
@@ -255,8 +247,7 @@ onesgame::swap_t onesgame::_swap(name account, swap_t &in,
 
     token_t token1, token2;
 
-    eosio_assert(in.code == it->token1.address.value || in.code == it->token2.address.value,
-                 "token address error");
+    eosio_assert(in.code == it->token1.address.value || in.code == it->token2.address.value, "token address error");
 
     if (in.code == it->token1.address.value && in.quantity.symbol == it->token1.symbol) {
         token1 = it->token1;
@@ -308,7 +299,7 @@ onesgame::swap_t onesgame::_swap(name account, swap_t &in,
     this->_swaplog(account, third_id, liquidity_id, token1, token2,
                    in.original_quantity, out.quantity, fee, price);
 
-    this->swapmine(account, in.original_quantity, liquidity_id);
+    this->swapmine(account, in.code, in.original_quantity, liquidity_id);
     return out;
 }
 
@@ -319,52 +310,29 @@ void onesgame::addliquidity(name account, uint64_t liquidity_id) {
 
     eosio_assert(defi_liquidity != _defi_liquidity.end(), "Liquidity does not exist");
 
-    std::vector<eosio::action> actions = _get_actions();
-    eosio_assert(actions.size() >= 3, "You need transfer both tokens");
+    tb_defi_transfer _defi_transfer(_self, _self.value);
+    eosio_assert(_defi_transfer.exists(), "You need transfer both tokens");
+    st_defi_transfer defi_transfer = _defi_transfer.get();
+    
+    auto trx_id = this->_get_trx_id();
+    eosio_assert(defi_transfer.trx_id == trx_id && defi_transfer.status == 2, "You need transfer both tokens");
 
-    uint64_t idx = 0;
-    for (uint64_t i = 0; i < actions.size(); i++) {
-        eosio::action action = actions[i];
-        if (action.name == name("addliquidity") && action.account == get_self()) {
-            idx = i;
-            break;
-        }
-    }
-    eosio_assert(idx >= 2, "You need transfer both tokens");
-
-    eosio::action action1 = actions[idx - 1];
-    eosio::action action2 = actions[idx - 2];
-
-    eosio_assert(action1.name == eosio::name("transfer"), "You need transfer both tokens");
-    eosio_assert(action2.name == eosio::name("transfer"), "You need transfer both tokens");
-
-    size_t size1 = action1.data.size();
-    auto transfer_data1 = unpack<transfer_args>(&action1.data[0], size1);
-
-    size_t size2 = action2.data.size();
-    auto transfer_data2 = unpack<transfer_args>(&action2.data[0], size2);
+    auto transfer_data1 = defi_transfer.args1;
+    auto transfer_data2 = defi_transfer.args2;
 
     std::vector<std::string> params1;
     utils::split(transfer_data1.memo, ',', params1);
 
-    std::vector<std::string> params2;
-    utils::split(transfer_data2.memo, ',', params2);
-
-    eosio_assert(params1.size() == 2 && params2.size() == 2, "Invalid add liquidity");
-
-    eosio_assert(params1[0] == "addliquidity" && params2[0] == "addliquidity", "Invalid add liquidity.");
-
-    eosio_assert(params1[1] == params1[1], "Invalid add liquidity.");
     eosio_assert(atoll(params1[1].c_str()) == liquidity_id, "Invalid add liquidity.");
 
     token_t token1 = defi_liquidity->token1;
     token_t token2 = defi_liquidity->token2;
 
     asset quantity1, quantity2;
-    if (token1.address == action1.account && token2.address == action2.account) {
+    if (token1.address == defi_transfer.action1 && token2.address == defi_transfer.action2) {
         quantity1 = transfer_data1.quantity;
         quantity2 = transfer_data2.quantity;
-    } else if (token1.address == action2.account && token2.address == action1.account) {
+    } else if (token1.address == defi_transfer.action2 && token2.address == defi_transfer.action1) {
         quantity1 = transfer_data2.quantity;
         quantity2 = transfer_data1.quantity;
     } else {
@@ -459,6 +427,50 @@ void onesgame::addliquidity(name account, uint64_t liquidity_id) {
     }
 }
 
+void onesgame::_addliquidity(name from, name to, asset quantity, string memo) {
+    tb_defi_transfer _defi_transfer(_self, _self.value);
+
+    std::vector<std::string> params;
+    utils::split(memo, ',', params);
+
+    eosio_assert(params.size() == 2 && params[0] == "addliquidity", "Invalid add liquidity");
+    uint64_t liquidity_id = atoll(params[1].c_str());
+    
+    auto defi_liquidity = _defi_liquidity.find(liquidity_id);
+    eosio_assert(defi_liquidity != _defi_liquidity.end(), "Liquidity does not exist");
+
+    auto trx_id = this->_get_trx_id();
+
+    st_defi_transfer defi_transfer = _defi_transfer.get_or_default(st_defi_transfer{
+        .trx_id = trx_id,
+        .status = 0
+    });
+
+    transfer_args args({
+        .from = from,
+        .to = to,
+        .quantity = quantity,
+        .memo = memo
+    });
+    
+    if(defi_transfer.trx_id != trx_id || (defi_transfer.trx_id==trx_id && defi_transfer.status  ==0) ){
+        defi_transfer.args1 = args;
+        defi_transfer.status = 1;
+        defi_transfer.action1 = name(this->code);
+        defi_transfer.trx_id = trx_id;
+    }else if( defi_transfer.trx_id==trx_id && defi_transfer.status == 1){
+        defi_transfer.args2 = args;
+        defi_transfer.action2 = name(this->code);
+        defi_transfer.status = 2;
+
+        eosio_assert(defi_transfer.args1.memo == defi_transfer.args2.memo, "Invalid add liquidity");
+    }else{
+        eosio_assert(false, "You need transfer both tokens");
+    }
+    
+    _defi_transfer.set(defi_transfer, _self);
+}
+
 void onesgame::subliquidity(name account, uint64_t liquidity_id, uint64_t liquidity_token) {
     require_auth(account);
 
@@ -528,18 +540,35 @@ void onesgame::subliquidity(name account, uint64_t liquidity_id, uint64_t liquid
                         quantity1, quantity2, liquidity_token);
 }
 
-void onesgame::swapmine(name account, asset quantity, uint64_t liquidity_id) {
+void onesgame::swapmine(name account, uint64_t code, asset quantity, uint64_t liquidity_id) {
     auto defi_liquidity = _defi_liquidity.find(liquidity_id);
 
     float weight = defi_liquidity->swap_weight;
 
     asset mine_quantity = asset(0, EOS_TOKEN_SYMBOL);
-
-    if (this->code == name(EOS_TOKEN_ACCOUNT).value &&
-        quantity.symbol == EOS_TOKEN_SYMBOL) {
-        mine_quantity.amount = quantity.amount * weight;
+    if(defi_liquidity->token1.address == name(EOS_TOKEN_ACCOUNT)){
+        if (code == name(EOS_TOKEN_ACCOUNT).value && quantity.symbol == EOS_TOKEN_SYMBOL) {
+            mine_quantity.amount = quantity.amount * weight;
+        } else {
+            mine_quantity.amount = quantity.amount * weight * defi_liquidity->price2;
+        }
     } else {
-        mine_quantity.amount = quantity.amount * weight * defi_liquidity->price2;
+        token_t token1,token2;
+        token1.address = name(EOS_TOKEN_ACCOUNT);
+        token1.symbol = EOS_TOKEN_SYMBOL;
+        token2.address = name(code);
+        token2.symbol = quantity.symbol;
+
+        checksum256 digest = this->_getpair_digest(token1, token2);
+        tb_defi_pair _defi_pair(_self, _self.value);
+
+        auto itr = _defi_pair.find(utils::uint64_hash(digest));
+        if(itr == _defi_pair.end()) return;
+        
+        auto eos_liquidity = _defi_liquidity.find(itr->liquidity_id);
+        if( eos_liquidity == _defi_liquidity.end()) return;
+        
+        mine_quantity.amount = quantity.amount * weight * eos_liquidity->price2;
     }
 
     if (mine_quantity.amount >= 10000) {
