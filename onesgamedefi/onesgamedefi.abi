@@ -58,8 +58,12 @@
                     "type": "uint64"
                 },
                 {
-                    "name": "percent",
-                    "type": "float32"
+                    "name": "eos_quantity",
+                    "type": "asset"
+                },
+                {
+                    "name": "usdt_quantity",
+                    "type": "asset"
                 }
             ]
         },

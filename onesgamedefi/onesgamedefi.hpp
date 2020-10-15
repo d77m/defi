@@ -223,7 +223,7 @@ class [[eosio::contract("onesgamedefi")]] onesgame : public contract {
 
     [[eosio::action]] void updateweight(uint64_t liquidity_id, uint64_t type, float weight);
 
-    [[eosio::action]] void marketmine(name account, uint64_t liquidity_id, uint64_t to_liquidity_id, float percent);
+    [[eosio::action]] void marketmine(name account, uint64_t liquidity_id, uint64_t to_liquidity_id, asset eos_quantity, asset usdt_quantity);
     [[eosio::action]] void marketexit(string memo, uint64_t amount);
     [[eosio::action]] void marketclaim();
 

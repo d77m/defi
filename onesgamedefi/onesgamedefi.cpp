@@ -641,10 +641,8 @@ uint64_t onesgame::_get_pool_id() {
 }
 
 void onesgame::marketmine(name account, uint64_t liquidity_id,
-                          uint64_t to_liquidity_id, float percent) {
+                          uint64_t to_liquidity_id, asset eos_quantity, asset usdt_quantity) {
     require_auth(name(ONES_PLAY_ACCOUNT));
-
-    eosio_assert(percent <= 0.8 && percent > 0, "percent must be less 0.8");
 
     eosio_assert( account == name(BOX_DEFI_ACCOUNT) || account == name(DFS_DEFI_ACCOUNT),
         "account invalid");
@@ -659,8 +657,8 @@ void onesgame::marketmine(name account, uint64_t liquidity_id,
     eosio_assert(it->token1.address == name(EOS_TOKEN_ACCOUNT), "must be eos");
     eosio_assert(it->token2.address == name(USDT_TOKEN_ACCOUNT), "must be usdt");
 
-    asset eos_quantity = it->quantity1 * percent;
-    asset usdt_quantity = it->quantity1 * percent;
+    eosio_assert(it->token1.symbol == eos_quantity.symbol, "must be eos");
+    eosio_assert(it->token2.symbol == usdt_quantity.symbol, "must be usdt");
 
     _market_info.emplace(get_self(), [&](auto &t) {
         t.liquidity_id = liquidity_id;
@@ -669,8 +667,8 @@ void onesgame::marketmine(name account, uint64_t liquidity_id,
         t.in_eos = eos_quantity;
         t.in_usdt = usdt_quantity;
 
-        t.in_eos = asset(0, EOS_TOKEN_SYMBOL);
-        t.in_usdt = asset(0, USDT_TOKEN_SYMBOL);
+        t.out_eos = asset(0, EOS_TOKEN_SYMBOL);
+        t.out_usdt = asset(0, USDT_TOKEN_SYMBOL);
 
         t.liquidity_token = 0;
         t.timestamp = now();
