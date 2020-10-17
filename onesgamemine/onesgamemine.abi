@@ -1,12 +1,7 @@
 {
     "____comment": "This file was generated with eosio-abigen. DO NOT EDIT ",
     "version": "eosio::abi/1.1",
-    "types": [
-        {
-            "new_type_name": "float_t",
-            "type": "float32"
-        }
-    ],
+    "types": [],
     "structs": [
         {
             "name": "claim",
@@ -28,18 +23,15 @@
             "base": "",
             "fields": [
                 {
-                    "name": "account",
-                    "type": "name"
-                },
-                {
-                    "name": "round",
+                    "name": "round_id",
                     "type": "uint64"
-                },
-                {
-                    "name": "factor",
-                    "type": "float_t"
                 }
             ]
+        },
+        {
+            "name": "minemarkets",
+            "base": "",
+            "fields": []
         },
         {
             "name": "mineswap",
@@ -56,6 +48,20 @@
             ]
         },
         {
+            "name": "oauth",
+            "base": "",
+            "fields": [
+                {
+                    "name": "account",
+                    "type": "name"
+                },
+                {
+                    "name": "status",
+                    "type": "uint8"
+                }
+            ]
+        },
+        {
             "name": "st_defi_account",
             "base": "",
             "fields": [
@@ -65,11 +71,11 @@
                 },
                 {
                     "name": "quantity",
-                    "type": "asset"
+                    "type": "uint64[]"
                 },
                 {
                     "name": "market_quantity",
-                    "type": "asset"
+                    "type": "uint64[]"
                 },
                 {
                     "name": "swap_quantity",
@@ -86,6 +92,10 @@
                 {
                     "name": "timestamp",
                     "type": "uint64"
+                },
+                {
+                    "name": "oauth",
+                    "type": "uint8"
                 }
             ]
         },
@@ -115,7 +125,7 @@
                 },
                 {
                     "name": "market_suply",
-                    "type": "uint64"
+                    "type": "uint64[]"
                 },
                 {
                     "name": "market_time",
@@ -127,7 +137,7 @@
                 },
                 {
                     "name": "market_quantity",
-                    "type": "uint64"
+                    "type": "uint64[]"
                 },
                 {
                     "name": "market_issue",
@@ -144,8 +154,12 @@
                     "type": "uint64"
                 },
                 {
+                    "name": "amount",
+                    "type": "uint64"
+                },
+                {
                     "name": "quantity",
-                    "type": "asset"
+                    "type": "uint64[]"
                 },
                 {
                     "name": "total",
@@ -160,6 +174,33 @@
                     "type": "uint64"
                 }
             ]
+        },
+        {
+            "name": "st_defi_round",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "account",
+                    "type": "name"
+                },
+                {
+                    "name": "round_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "amount",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "upgrade",
+            "base": "",
+            "fields": []
         }
     ],
     "actions": [
@@ -179,8 +220,23 @@
             "ricardian_contract": ""
         },
         {
+            "name": "minemarkets",
+            "type": "minemarkets",
+            "ricardian_contract": ""
+        },
+        {
             "name": "mineswap",
             "type": "mineswap",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "oauth",
+            "type": "oauth",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "upgrade",
+            "type": "upgrade",
             "ricardian_contract": ""
         }
     ],
@@ -202,6 +258,13 @@
         {
             "name": "market",
             "type": "st_defi_market",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "round",
+            "type": "st_defi_round",
             "index_type": "i64",
             "key_names": [],
             "key_types": []
