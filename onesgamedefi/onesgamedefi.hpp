@@ -169,13 +169,14 @@ class [[eosio::contract("onesgamedefi")]] onesgame : public contract {
         uint64_t liquidity_id;
         eosio::name account;
 
-        eosio::asset in_eos;
-        eosio::asset in_usdt;
+        eosio::asset in_token1;
+        eosio::asset in_token2;
 
         uint64_t liquidity_token;
+        symbol liquidity_symbol;
 
-        eosio::asset out_eos;
-        eosio::asset out_usdt;
+        eosio::asset out_token1;
+        eosio::asset out_token2;
 
         eosio::asset profit;
 
@@ -192,13 +193,13 @@ class [[eosio::contract("onesgamedefi")]] onesgame : public contract {
         eosio::name account;
         uint64_t liquidity_id;
 
-        eosio::asset in_eos;
-        eosio::asset in_usdt;
+        eosio::asset in_token1;
+        eosio::asset in_token2;
 
         uint64_t liquidity_token;
 
-        eosio::asset out_eos;
-        eosio::asset out_usdt;
+        eosio::asset out_token1;
+        eosio::asset out_token2;
 
         eosio::asset profit;
 
@@ -223,7 +224,7 @@ class [[eosio::contract("onesgamedefi")]] onesgame : public contract {
 
     [[eosio::action]] void updateweight(uint64_t liquidity_id, uint64_t type, float weight);
 
-    [[eosio::action]] void marketmine(name account, uint64_t liquidity_id, uint64_t to_liquidity_id, asset eos_quantity, asset usdt_quantity);
+    [[eosio::action]] void marketmine(name account, uint64_t liquidity_id, uint64_t to_liquidity_id, asset quantity1, asset quantity2);
     [[eosio::action]] void marketexit(string memo, uint64_t amount);
     [[eosio::action]] void marketclaim();
 
@@ -233,7 +234,7 @@ class [[eosio::contract("onesgamedefi")]] onesgame : public contract {
     void _addliquidity(name from, name to, asset quantity, string memo);
 
     void _marketclaim_box();
-    void _marketexit_box(uint64_t liquidity_token, string memo);
+    void _marketexit_box(uint64_t liquidity_token, symbol symbol_code, string memo);
 
     void _marketexit_dfs(uint64_t liquidity_token, uint64_t liquidity_id);
 

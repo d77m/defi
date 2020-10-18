@@ -58,11 +58,11 @@
                     "type": "uint64"
                 },
                 {
-                    "name": "eos_quantity",
+                    "name": "quantity1",
                     "type": "asset"
                 },
                 {
-                    "name": "usdt_quantity",
+                    "name": "quantity2",
                     "type": "asset"
                 }
             ]
@@ -291,11 +291,11 @@
                     "type": "name"
                 },
                 {
-                    "name": "in_eos",
+                    "name": "in_token1",
                     "type": "asset"
                 },
                 {
-                    "name": "in_usdt",
+                    "name": "in_token2",
                     "type": "asset"
                 },
                 {
@@ -303,11 +303,15 @@
                     "type": "uint64"
                 },
                 {
-                    "name": "out_eos",
+                    "name": "liquidity_symbol",
+                    "type": "symbol"
+                },
+                {
+                    "name": "out_token1",
                     "type": "asset"
                 },
                 {
-                    "name": "out_usdt",
+                    "name": "out_token2",
                     "type": "asset"
                 },
                 {
@@ -341,11 +345,11 @@
                     "type": "uint64"
                 },
                 {
-                    "name": "in_eos",
+                    "name": "in_token1",
                     "type": "asset"
                 },
                 {
-                    "name": "in_usdt",
+                    "name": "in_token2",
                     "type": "asset"
                 },
                 {
@@ -353,11 +357,11 @@
                     "type": "uint64"
                 },
                 {
-                    "name": "out_eos",
+                    "name": "out_token1",
                     "type": "asset"
                 },
                 {
-                    "name": "out_usdt",
+                    "name": "out_token2",
                     "type": "asset"
                 },
                 {
