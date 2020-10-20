@@ -120,7 +120,10 @@ void onesgame::transfer(name from, name to, asset quantity, string memo) {
 
     if (action == "swap") return this->swap(from, quantity, params);
     if (action == "addliquidity") return this->_addliquidity(from, to, quantity, memo);
-    return this->_transfer_to(name(ONES_PLAY_ACCOUNT), this->code, quantity, memo);
+    
+    if(action != "marketsettle")
+        return this->_transfer_to(name(ONES_PLAY_ACCOUNT), this->code, quantity, memo);
+    
 }
 
 void onesgame::_swaplog(name account, uint64_t third_id, uint64_t liquidity_id,
