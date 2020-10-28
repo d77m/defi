@@ -195,20 +195,12 @@
             ]
         },
         {
-            "name": "st_defi_pool",
+            "name": "st_defi_pools",
             "base": "",
             "fields": [
                 {
-                    "name": "pool_id",
-                    "type": "uint64"
-                },
-                {
                     "name": "account",
                     "type": "name"
-                },
-                {
-                    "name": "liquidity_id",
-                    "type": "uint64"
                 },
                 {
                     "name": "liquidity_token",
@@ -535,8 +527,8 @@
             "key_types": []
         },
         {
-            "name": "defipool",
-            "type": "st_defi_pool",
+            "name": "defipools",
+            "type": "st_defi_pools",
             "index_type": "i64",
             "key_names": [],
             "key_types": []
