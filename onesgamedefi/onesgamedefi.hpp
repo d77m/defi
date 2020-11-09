@@ -227,7 +227,7 @@ public:
 
     [[eosio::action]] void subliquidity(name account, uint64_t liquidity_id, uint64_t liquidity_token);
 
-    [[eosio::action]] void remove(uint64_t type, uint64_t id);
+    [[eosio::action]] void remove(uint64_t id);
 
     [[eosio::action]] void updateweight(uint64_t liquidity_id, uint64_t type, float weight);
 
