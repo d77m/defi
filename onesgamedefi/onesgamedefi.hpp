@@ -97,17 +97,6 @@ public:
         string memo;
     };
 
-    struct st_defi_transfer
-    {
-        checksum256 trx_id;
-        name action1;
-        transfer_args args1;
-        name action2;
-        transfer_args args2;
-        uint64_t status;
-    };
-    typedef singleton<"transfer"_n, st_defi_transfer> tb_defi_transfer;
-
     struct st_defi_transfers
     {
         checksum256 trx_id;
