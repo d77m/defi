@@ -411,6 +411,9 @@ void onesgame::addliquidity(name account, uint64_t liquidity_id)
             uint64_t a = (a1 - a2 / price) * p1;
             surplusQuantity = asset(a, quantity1.symbol);
             quantity1 -= surplusQuantity;
+
+            float curslippage = 1.0 * surplusQuantity.amount / quantity1.amount;
+            eosio_assert(curslippage<0.1, "slippage exceed default 0.10");
         }
         else if ((price * a1) < a2)
         {
@@ -418,6 +421,9 @@ void onesgame::addliquidity(name account, uint64_t liquidity_id)
             uint64_t a = (a2 - a1 * price) * p2;
             surplusQuantity = asset(a, quantity2.symbol);
             quantity2 -= surplusQuantity;
+
+            float curslippage = 1.0*surplusQuantity.amount / quantity2.amount;
+            eosio_assert(curslippage<0.1, "slippage exceed default 0.10");
         }
 
         float_t alpha = (1.00 * quantity1.amount) /
