@@ -33,9 +33,6 @@ const float_t ONES_DIVD_FEE = 0.001;
 void onesgame::newliquidity(name account, token_t token1, token_t token2)
 {
     require_auth(account);
-    if(token1.address == name("onesgametest") || token2.address == name("onesgametest")){
-        eosio_assert(false, "onesgametest");
-    }
 
     if(token1.address == name("crayfishball") || token2.address == name("crayfishball")){
         eosio_assert(false, "crayfishball");
@@ -248,9 +245,6 @@ void onesgame::swap(name account, asset quantity, std::vector<std::string> &para
 onesgame::swap_t onesgame::_swap(name account, swap_t &in,
                                  uint64_t liquidity_id, uint64_t slippage, uint64_t third_id)
 {
-    if(liquidity_id == 49){
-        eosio_assert(false, "onesgametest");
-    }
     auto it = _defi_liquidity.find(liquidity_id);
     eosio_assert(it != _defi_liquidity.end(), "Liquidity does not exist");
 
