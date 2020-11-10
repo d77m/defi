@@ -343,17 +343,16 @@ void onesgame::addliquidity(name account, uint64_t liquidity_id)
 
     eosio_assert(defi_liquidity != _defi_liquidity.end(), "Liquidity does not exist");
 
-    tb_defi_transfer _defi_transfer(_self, _self.value);
-    eosio_assert(_defi_transfer.exists(), "You need transfer both tokens");
-    st_defi_transfer defi_transfer = _defi_transfer.get();
+    tb_defi_transfers _defi_transfer(_self, _self.value);
+    checksum256 trx_id = this->_get_trx_id();
 
-    auto trx_id = this->_get_trx_id();
-    eosio_assert(defi_transfer.trx_id == trx_id && defi_transfer.status == 2, "You need transfer both tokens");
-    defi_transfer.status = 3;
-    _defi_transfer.set(defi_transfer, _self);
+    auto defi_transfer = _defi_transfer.find(utils::uint64_hash(trx_id));
+    eosio_assert(defi_transfer != _defi_transfer.end(), "You need transfer both tokens");
 
-    auto transfer_data1 = defi_transfer.args1;
-    auto transfer_data2 = defi_transfer.args2;
+    eosio_assert(defi_transfer->status == 2, "You need transfer both tokens");
+   
+    auto transfer_data1 = defi_transfer->args1;
+    auto transfer_data2 = defi_transfer->args2;
 
     std::vector<std::string> params1;
     utils::split(transfer_data1.memo, ',', params1);
@@ -364,12 +363,12 @@ void onesgame::addliquidity(name account, uint64_t liquidity_id)
     token_t token2 = defi_liquidity->token2;
 
     asset quantity1, quantity2;
-    if (token1.address == defi_transfer.action1 && token2.address == defi_transfer.action2)
+    if (token1.address == defi_transfer->action1 && token2.address == defi_transfer->action2)
     {
         quantity1 = transfer_data1.quantity;
         quantity2 = transfer_data2.quantity;
     }
-    else if (token1.address == defi_transfer.action2 && token2.address == defi_transfer.action1)
+    else if (token1.address == defi_transfer->action2 && token2.address == defi_transfer->action1)
     {
         quantity1 = transfer_data2.quantity;
         quantity2 = transfer_data1.quantity;
@@ -492,11 +491,14 @@ void onesgame::addliquidity(name account, uint64_t liquidity_id)
     {
         this->_transfer_to(account, defi_liquidity->token2.address.value, surplusQuantity, "refund");
     }
+
+    _defi_transfer.erase(defi_transfer);
+
 }
 
 void onesgame::_addliquidity(name from, name to, asset quantity, string memo)
 {
-    tb_defi_transfer _defi_transfer(_self, _self.value);
+    tb_defi_transfers _defi_transfer(_self, _self.value);
 
     std::vector<std::string> params;
     utils::split(memo, ',', params);
@@ -507,49 +509,39 @@ void onesgame::_addliquidity(name from, name to, asset quantity, string memo)
     auto defi_liquidity = _defi_liquidity.find(liquidity_id);
     eosio_assert(defi_liquidity != _defi_liquidity.end(), "Liquidity does not exist");
 
-    auto trx_id = this->_get_trx_id();
+    checksum256 trx_id = this->_get_trx_id();
 
-    st_defi_transfer defi_transfer = _defi_transfer.get_or_default(st_defi_transfer{
-        .trx_id = trx_id,
-        .status = 0});
+    auto defi_transfer = _defi_transfer.find(utils::uint64_hash(trx_id));
 
     transfer_args args({.from = from,
                         .to = to,
                         .quantity = quantity,
                         .memo = memo});
 
-    if(defi_transfer.trx_id != trx_id && (defi_transfer.status == 1 || defi_transfer.status == 2)){
-        if(defi_transfer.status == 1){
-            auto transfer_data = defi_transfer.args1;
-            _transfer_to(transfer_data.from, defi_transfer.action1.value, transfer_data.quantity, "refund");
-        }
-        if(defi_transfer.status == 2){
-            auto transfer_data = defi_transfer.args2;
-            _transfer_to(transfer_data.from, defi_transfer.action2.value, transfer_data.quantity, "refund");
-        }
-    }
-
-    if (defi_transfer.trx_id != trx_id || (defi_transfer.trx_id == trx_id && defi_transfer.status == 0))
+    if (defi_transfer == _defi_transfer.end())
     {
-        defi_transfer.args1 = args;
-        defi_transfer.status = 1;
-        defi_transfer.action1 = name(this->code);
-        defi_transfer.trx_id = trx_id;
+        _defi_transfer.emplace(get_self(), [&](auto &t) {
+            t.trx_id = trx_id;
+            t.args1 = args;
+            t.action1 = name(this->code);
+            t.status = 1;
+        });
     }
-    else if (defi_transfer.trx_id == trx_id && defi_transfer.status == 1)
+    else if(defi_transfer != _defi_transfer.end() && defi_transfer->status == 1)
     {
-        defi_transfer.args2 = args;
-        defi_transfer.action2 = name(this->code);
-        defi_transfer.status = 2;
+        eosio_assert(defi_transfer->args1.memo == args.memo, "Invalid add liquidity");
 
-        eosio_assert(defi_transfer.args1.memo == defi_transfer.args2.memo, "Invalid add liquidity");
+        _defi_transfer.modify(defi_transfer, _self, [&](auto &t) {
+            t.args2 = args;
+            t.action2 = name(this->code);
+            t.status = 2;
+        });
     }
     else
     {
         eosio_assert(false, "You need transfer both tokens");
     }
 
-    _defi_transfer.set(defi_transfer, _self);
 }
 
 void onesgame::subliquidity(name account, uint64_t liquidity_id, uint64_t liquidity_token)
@@ -693,6 +685,29 @@ void onesgame::updateweight(uint64_t liquidity_id, uint64_t type, float_t weight
     {
         _defi_liquidity.modify(it, _self, [&](auto &t) { t.swap_weight = weight; });
     }
+}
+
+void onesgame::refund(name account, checksum256 trx_id){
+    
+    require_auth(account);
+    tb_defi_transfers _defi_transfer(_self, _self.value);
+
+    auto defi_transfer = _defi_transfer.find(utils::uint64_hash(trx_id));
+    eosio_assert(defi_transfer != _defi_transfer.end(), "transfer isn't exist");
+
+    if(defi_transfer->status == 1){
+        auto transfer_data = defi_transfer->args1;
+        _transfer_to(transfer_data.from, defi_transfer->action1.value, transfer_data.quantity, "refund");
+    }
+
+    if(defi_transfer->status == 2){
+        auto transfer_data1 = defi_transfer->args1;
+        _transfer_to(transfer_data1.from, defi_transfer->action1.value, transfer_data1.quantity, "refund");
+
+        auto transfer_data2 = defi_transfer->args2;
+        _transfer_to(transfer_data2.from, defi_transfer->action2.value, transfer_data2.quantity, "refund");
+    }
+
 }
 
 void onesgame::remove(uint64_t id)

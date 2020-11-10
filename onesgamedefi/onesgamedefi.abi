@@ -91,6 +91,20 @@
             ]
         },
         {
+            "name": "refund",
+            "base": "",
+            "fields": [
+                {
+                    "name": "account",
+                    "type": "name"
+                },
+                {
+                    "name": "trx_id",
+                    "type": "checksum256"
+                }
+            ]
+        },
+        {
             "name": "remove",
             "base": "",
             "fields": [
@@ -496,6 +510,11 @@
         {
             "name": "newliquidity",
             "type": "newliquidity",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "refund",
+            "type": "refund",
             "ricardian_contract": ""
         },
         {
