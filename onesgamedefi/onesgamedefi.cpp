@@ -34,7 +34,8 @@ void onesgame::newliquidity(name account, token_t token1, token_t token2)
 {
     require_auth(account);
 
-    if(token1.address == name("crayfishball") || token2.address == name("crayfishball")){
+    if (token1.address == name("crayfishball") || token2.address == name("crayfishball"))
+    {
         eosio_assert(false, "crayfishball");
     }
 
@@ -344,7 +345,7 @@ void onesgame::addliquidity(name account, uint64_t liquidity_id)
     eosio_assert(defi_transfer != _defi_transfer.end(), "You need transfer both tokens");
 
     eosio_assert(defi_transfer->status == 2, "You need transfer both tokens");
-   
+
     auto transfer_data1 = defi_transfer->args1;
     auto transfer_data2 = defi_transfer->args2;
 
@@ -407,7 +408,7 @@ void onesgame::addliquidity(name account, uint64_t liquidity_id)
             quantity1 -= surplusQuantity;
 
             float curslippage = 1.0 * surplusQuantity.amount / quantity1.amount;
-            eosio_assert(curslippage<0.1, "slippage exceed default 0.10");
+            eosio_assert(curslippage < 0.1, "slippage exceed default 0.10");
         }
         else if ((price * a1) < a2)
         {
@@ -416,8 +417,8 @@ void onesgame::addliquidity(name account, uint64_t liquidity_id)
             surplusQuantity = asset(a, quantity2.symbol);
             quantity2 -= surplusQuantity;
 
-            float curslippage = 1.0*surplusQuantity.amount / quantity2.amount;
-            eosio_assert(curslippage<0.1, "slippage exceed default 0.10");
+            float curslippage = 1.0 * surplusQuantity.amount / quantity2.amount;
+            eosio_assert(curslippage < 0.1, "slippage exceed default 0.10");
         }
 
         float_t alpha = (1.00 * quantity1.amount) /
@@ -493,7 +494,6 @@ void onesgame::addliquidity(name account, uint64_t liquidity_id)
     }
 
     _defi_transfer.erase(defi_transfer);
-
 }
 
 void onesgame::_addliquidity(name from, name to, asset quantity, string memo)
@@ -527,7 +527,7 @@ void onesgame::_addliquidity(name from, name to, asset quantity, string memo)
             t.status = 1;
         });
     }
-    else if(defi_transfer != _defi_transfer.end() && defi_transfer->status == 1)
+    else if (defi_transfer != _defi_transfer.end() && defi_transfer->status == 1)
     {
         eosio_assert(defi_transfer->args1.memo == args.memo, "Invalid add liquidity");
 
@@ -541,13 +541,17 @@ void onesgame::_addliquidity(name from, name to, asset quantity, string memo)
     {
         eosio_assert(false, "You need transfer both tokens");
     }
-
 }
 
 void onesgame::subliquidity(name account, uint64_t liquidity_id, uint64_t liquidity_token)
 {
     require_auth(account);
-    
+
+    _subliquidity(account, liquidity_id, liquidity_token, false);
+}
+
+void onesgame::_subliquidity(name account, uint64_t liquidity_id, uint64_t liquidity_token, bool is_reserve)
+{
     auto defi_liquidity = _defi_liquidity.find(liquidity_id);
     eosio_assert(defi_liquidity != _defi_liquidity.end(), "Liquidity does not exist");
 
@@ -611,13 +615,72 @@ void onesgame::subliquidity(name account, uint64_t liquidity_id, uint64_t liquid
         });
     }
 
-    _transfer_to(account, defi_liquidity->token1.address.value, quantity1, "withdraw");
-    _transfer_to(account, defi_liquidity->token2.address.value, quantity2, "withdraw");
+    if (!is_reserve)
+    {
+        _transfer_to(account, defi_liquidity->token1.address.value, quantity1, "withdraw");
+        _transfer_to(account, defi_liquidity->token2.address.value, quantity2, "withdraw");
+    }
+    else
+    {
+        // get balance 
+        accounts _ac1(defi_liquidity->token1.address, _self.value);
+        const auto itr1 = _ac1.find( defi_liquidity->token1.symbol.code().raw());
+        eosio_assert(itr1 != _ac1.end(), "token balance does not exist.");
 
+         accounts _ac2(defi_liquidity->token2.address, _self.value);
+        const auto itr2 = _ac2.find( defi_liquidity->token2.symbol.code().raw());
+        eosio_assert(itr2 != _ac2.end(), "token balance does not exist.");
+
+        eosio_assert(itr1->balance.amount > quantity1.amount && itr2->balance.amount > quantity2.amount, "balance enougth");
+
+        tb_defi_queue defi_queue(get_self(),_self.value);
+        auto queue_id = 1;
+        auto it = defi_queue.rbegin();
+        if(it != defi_queue.rend()){
+            queue_id = it->queue_id+1;
+        }
+
+        defi_queue.emplace(get_self(), [&](auto &t) {
+            t.queue_id = queue_id;
+            t.account = account;
+            t.liquidity_id = liquidity_id;
+            t.quantity1 = quantity1;
+            t.quantity2 = quantity2;
+            t.timestamp = now();
+        });
+    }
     this->_liquiditylog(account, liquidity_id, "withdraw",
-                        defi_liquidity->token1, defi_liquidity->token2,
-                        quantity1, quantity2, liquidity_token,
-                        in_balance, out_balance, balance_ltoken);
+                            defi_liquidity->token1, defi_liquidity->token2,
+                            quantity1, quantity2, liquidity_token,
+                            in_balance, out_balance, balance_ltoken);
+}
+
+void onesgame::claim(name account, uint64_t queue_id){
+    require_auth(account);
+
+    tb_defi_queue defi_queue(get_self(), _self.value);
+
+    auto it = defi_queue.find(queue_id);
+    eosio_assert(it != defi_queue.end(), "queue isn't exist");
+
+    if(account == name(ONES_PLAY_ACCOUNT)){
+        eosio_assert(it->account == account, "account invalid");
+    }
+
+    auto defi_liquidity = _defi_liquidity.find(it->liquidity_id);
+    eosio_assert(defi_liquidity != _defi_liquidity.end(), "Liquidity does not exist");
+
+    _transfer_to(account, defi_liquidity->token1.address.value, it->quantity1, "withdraw");
+    _transfer_to(account, defi_liquidity->token2.address.value, it->quantity2, "withdraw");
+
+    defi_queue.erase(it);
+}
+
+void onesgame::reserve(name account, uint64_t liquidity_id, uint64_t liquidity_token)
+{
+    require_auth(account);
+
+    _subliquidity(account, liquidity_id, liquidity_token, true);
 }
 
 void onesgame::swapmine(name account, uint64_t code, asset quantity, uint64_t liquidity_id)
@@ -687,33 +750,35 @@ void onesgame::updateweight(uint64_t liquidity_id, uint64_t type, float_t weight
     }
 }
 
-void onesgame::refund(name account, checksum256 trx_id){
-    
+void onesgame::refund(name account, checksum256 trx_id)
+{
+
     require_auth(account);
     tb_defi_transfers _defi_transfer(_self, _self.value);
 
     auto defi_transfer = _defi_transfer.find(utils::uint64_hash(trx_id));
     eosio_assert(defi_transfer != _defi_transfer.end(), "transfer isn't exist");
 
-    if(defi_transfer->status == 1){
+    if (defi_transfer->status == 1)
+    {
         auto transfer_data = defi_transfer->args1;
         _transfer_to(transfer_data.from, defi_transfer->action1.value, transfer_data.quantity, "refund");
     }
 
-    if(defi_transfer->status == 2){
+    if (defi_transfer->status == 2)
+    {
         auto transfer_data1 = defi_transfer->args1;
         _transfer_to(transfer_data1.from, defi_transfer->action1.value, transfer_data1.quantity, "refund");
 
         auto transfer_data2 = defi_transfer->args2;
         _transfer_to(transfer_data2.from, defi_transfer->action2.value, transfer_data2.quantity, "refund");
     }
-
 }
 
 void onesgame::remove(uint64_t id)
 {
     require_auth(name(ONES_PLAY_ACCOUNT));
-   
+
     tb_defi_pair _defi_pair(_self, _self.value);
 
     auto itr = _defi_liquidity.find(id);
@@ -1072,6 +1137,9 @@ void onesgame::_handle_refund(asset quantity)
 
     if (this->code == liquidity->token2.address.value && quantity.symbol == liquidity->token2.symbol)
     {
+        float curslippage = 1.0 * quantity.amount / info->in_token2.amount;
+        eosio_assert(curslippage < 0.1, "slippage exceed default 0.10");
+
         _market_info.modify(info, _self, [&](auto &t) {
             t.in_token2 -= quantity;
             t.status = 1;
@@ -1079,6 +1147,9 @@ void onesgame::_handle_refund(asset quantity)
     }
     else if (this->code == liquidity->token1.address.value && quantity.symbol == liquidity->token1.symbol)
     {
+        float curslippage = 1.0 * quantity.amount / info->in_token1.amount;
+        eosio_assert(curslippage < 0.1, "slippage exceed default 0.10");
+
         _market_info.modify(info, _self, [&](auto &t) {
             t.in_token1 -= quantity;
             t.status = 1;
@@ -1123,7 +1194,7 @@ extern "C"
         {
             switch (action)
             {
-                EOSIO_DISPATCH_HELPER(onesgame, (newliquidity)(addliquidity)(subliquidity)(remove)(
+                EOSIO_DISPATCH_HELPER(onesgame, (newliquidity)(addliquidity)(subliquidity)(reserve)(claim)(remove)(
                                                     updateweight)(marketmine)(marketexit)(marketclaim)(marketsettle))
             }
             return;

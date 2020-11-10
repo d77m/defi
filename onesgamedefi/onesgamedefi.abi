@@ -9,6 +9,16 @@
     ],
     "structs": [
         {
+            "name": "account",
+            "base": "",
+            "fields": [
+                {
+                    "name": "balance",
+                    "type": "asset"
+                }
+            ]
+        },
+        {
             "name": "addliquidity",
             "base": "",
             "fields": [
@@ -18,6 +28,20 @@
                 },
                 {
                     "name": "liquidity_id",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "claim",
+            "base": "",
+            "fields": [
+                {
+                    "name": "account",
+                    "type": "name"
+                },
+                {
+                    "name": "queue_id",
                     "type": "uint64"
                 }
             ]
@@ -110,6 +134,24 @@
             "fields": [
                 {
                     "name": "id",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "reserve",
+            "base": "",
+            "fields": [
+                {
+                    "name": "account",
+                    "type": "name"
+                },
+                {
+                    "name": "liquidity_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "liquidity_token",
                     "type": "uint64"
                 }
             ]
@@ -215,6 +257,36 @@
                 {
                     "name": "liquidity_token",
                     "type": "uint64"
+                },
+                {
+                    "name": "quantity1",
+                    "type": "asset"
+                },
+                {
+                    "name": "quantity2",
+                    "type": "asset"
+                },
+                {
+                    "name": "timestamp",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "st_defi_queue",
+            "base": "",
+            "fields": [
+                {
+                    "name": "queue_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "liquidity_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "account",
+                    "type": "name"
                 },
                 {
                     "name": "quantity1",
@@ -488,6 +560,11 @@
             "ricardian_contract": ""
         },
         {
+            "name": "claim",
+            "type": "claim",
+            "ricardian_contract": ""
+        },
+        {
             "name": "marketclaim",
             "type": "marketclaim",
             "ricardian_contract": ""
@@ -523,6 +600,11 @@
             "ricardian_contract": ""
         },
         {
+            "name": "reserve",
+            "type": "reserve",
+            "ricardian_contract": ""
+        },
+        {
             "name": "subliquidity",
             "type": "subliquidity",
             "ricardian_contract": ""
@@ -534,6 +616,13 @@
         }
     ],
     "tables": [
+        {
+            "name": "accounts",
+            "type": "account",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
         {
             "name": "config",
             "type": "st_defi_config",
@@ -579,6 +668,13 @@
         {
             "name": "pair",
             "type": "st_defi_pair",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "queue",
+            "type": "st_defi_queue",
             "index_type": "i64",
             "key_names": [],
             "key_types": []

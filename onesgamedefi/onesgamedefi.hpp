@@ -89,6 +89,22 @@ public:
 
     typedef multi_index<"liquidity"_n, st_defi_liquidity> tb_defi_liquidity;
 
+    struct [[eosio::table]] st_defi_queue
+    {
+        uint64_t queue_id;
+        uint64_t liquidity_id;
+        name account;
+
+        eosio::asset quantity1;
+        eosio::asset quantity2;
+        uint64_t timestamp;
+
+        uint64_t primary_key() const { return queue_id; }
+    };
+
+    typedef multi_index<"queue"_n, st_defi_queue> tb_defi_queue;
+
+
     struct transfer_args
     {
         name from;
@@ -108,7 +124,6 @@ public:
         uint64_t primary_key() const { return utils::uint64_hash(trx_id); }
     };
     typedef multi_index<"transfers"_n, st_defi_transfers> tb_defi_transfers;
-
 
     struct [[eosio::table]] st_defi_pools
     {
@@ -220,6 +235,14 @@ public:
 
     typedef multi_index<"marketlog"_n, st_market_log> tb_market_log;
 
+    struct [[eosio::table]] account
+    {
+        asset balance;
+
+        uint64_t primary_key() const { return balance.symbol.code().raw(); }
+    };
+    typedef eosio::multi_index<"accounts"_n, account> accounts;
+
 public:
     void transfer(name from, name to, asset quantity, string memo);
 
@@ -228,6 +251,10 @@ public:
     [[eosio::action]] void addliquidity(name account, uint64_t liquidity_id);
 
     [[eosio::action]] void subliquidity(name account, uint64_t liquidity_id, uint64_t liquidity_token);
+
+    [[eosio::action]] void reserve(name account, uint64_t liquidity_id, uint64_t liquidity_token);
+
+    [[eosio::action]] void claim(name account, uint64_t queue_id);
 
     [[eosio::action]] void remove(uint64_t id);
 
@@ -243,6 +270,8 @@ public:
 
 private:
     void _addliquidity(name from, name to, asset quantity, string memo);
+    
+    void _subliquidity(name account, uint64_t liquidity_id, uint64_t liquidity_token, bool is_reserve);
 
     void _marketclaim_box();
     void _marketexit_box(uint64_t liquidity_token, symbol symbol_code, string memo);
