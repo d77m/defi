@@ -67,6 +67,16 @@ void onesgame::newliquidity(name account, token_t token1, token_t token2)
         t.liquidity_weight = 0;
         t.timestamp = now();
     });
+
+    eosio::action(eosio::permission_level{get_self(), "active"_n},
+                  eosio::name(ONES_LOG_ACCOUNT), "newliquidity"_n,
+                  make_tuple(liquidity_id, iseos ? token2 : token1,iseos ? token1 : token2))
+        .send();
+
+    eosio::action(eosio::permission_level{get_self(), "active"_n},
+                  eosio::name(ONES_MINE_ACCOUNT), "newliquidity"_n,
+                  make_tuple(liquidity_id, iseos ? token2 : token1,iseos ? token1 : token2))
+        .send();
 }
 
 void onesgame::_newpair(uint64_t liquidity_id, const token_t &token1, const token_t &token2)
@@ -180,6 +190,13 @@ void onesgame::_liquiditylog(name account, uint64_t liquidity_id, string type,
 
     eosio::action(eosio::permission_level{get_self(), "active"_n},
                   eosio::name(ONES_LOG_ACCOUNT), "liquiditylog"_n,
+                  make_tuple(account, liquidity_id, type,
+                             in_token, out_token, in_asset, out_asset, liquidity_token,
+                             in_balance, out_balance, balance_ltoken))
+        .send();
+
+    eosio::action(eosio::permission_level{get_self(), "active"_n},
+                  eosio::name(ONES_MINE_ACCOUNT), "liquiditylog"_n,
                   make_tuple(account, liquidity_id, type,
                              in_token, out_token, in_asset, out_asset, liquidity_token,
                              in_balance, out_balance, balance_ltoken))
@@ -748,6 +765,16 @@ void onesgame::updateweight(uint64_t liquidity_id, uint64_t type, float_t weight
     {
         _defi_liquidity.modify(it, _self, [&](auto &t) { t.swap_weight = weight; });
     }
+
+    eosio::action(eosio::permission_level{get_self(), "active"_n},
+                  eosio::name(ONES_LOG_ACCOUNT), "updateweight"_n,
+                  make_tuple(liquidity_id, type, weight))
+        .send();
+
+    eosio::action(eosio::permission_level{get_self(), "active"_n},
+                  eosio::name(ONES_MINE_ACCOUNT), "updateweight"_n,
+                  make_tuple(liquidity_id, type, weight))
+        .send();
 }
 
 void onesgame::refund(name account, checksum256 trx_id)
